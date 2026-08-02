@@ -1,0 +1,202 @@
+[
+  {
+    "slug": "eagle-ridge",
+    "title": "Eagle Ridge Dr, Ledyard",
+    "region": "Ledyard",
+    "description": "This is the house that I was born in. I don’t have my own memories of this house while we lived there since we moved when I was one. Interestingly, since we moved back to Gales Ferry later, I have memories of this house when we *didn’t* live there.\n\nI’ve asked my mom and dad about this house but never really got a clear vision about their memories at this point in their lives and marriage.",
+    "order": 0,
+    "imagePath": "/paintings/houses/eagle-ridge.jpg"
+  },
+  {
+    "slug": "bower",
+    "title": "Bower Rd, Annapolis",
+    "region": "Annapolis",
+    "description": "",
+    "order": 1,
+    "imagePath": "/paintings/houses/bower.jpg"
+  },
+  {
+    "slug": "molina",
+    "title": "Molina St, Honolulu",
+    "region": "Honolulu",
+    "description": "",
+    "order": 2,
+    "imagePath": "/paintings/houses/molina.jpg"
+  },
+  {
+    "slug": "friar-tuck",
+    "title": "Friar Tuck Dr, Gales Ferry",
+    "region": "Gales Ferry",
+    "description": "",
+    "order": 3,
+    "imagePath": "/paintings/houses/friar-tuck.jpg"
+  },
+  {
+    "slug": "argonne",
+    "title": "Argonne Dr, Fairfax",
+    "region": "Fairfax",
+    "description": "",
+    "order": 4,
+    "imagePath": "/paintings/houses/argonne.jpg"
+  },
+  {
+    "slug": "braeburn",
+    "title": "Braeburn Dr, Fairfax",
+    "region": "Fairfax",
+    "description": "",
+    "order": 5,
+    "imagePath": "/paintings/houses/braeburn.jpg"
+  },
+  {
+    "slug": "robin-hood",
+    "title": "Robin Hood Dr, Ledyard",
+    "region": "Ledyard",
+    "description": "I lived in this house with my mother and father during my junior and senior years of high school. My brothers had already left for college and it was an extraordinarily difficult time for me. The beginning of what would become a two-decade narrative arc of trying to make sense of the dark places my mind took me. This house in the same neighborhood we had lived in when I was in 3rd, 4th and 5th grades — we moved away then moved back — and I think my parents were hoping that the familiarity and the previous connections would make the move less painful for me. It didn’t…but as a parent now I can appreciate that sort of decision-making.\n\nMost of my stories from this house are too personal to share in a public space like this, but I’m not surprised that the final painting of this house ended up being set in the dark. This is house where I learned about insomnia and running in the dark at 2am. I lived over the garage so sneaking in and out was pretty straight-forward. While most teenagers might be tempted to sneak out to socialize or drink, all I did was run and find reasonably private places to cry with abandon.",
+    "order": 6,
+    "imagePath": "/paintings/houses/robin-hood.jpg"
+  },
+  {
+    "slug": "goodhue",
+    "title": "Goodhue, Northfield",
+    "region": "Northfield",
+    "description": "Both of my older brothers went to small liberal arts colleges and I wanted to be just like them, so I did, too. I ended up choosing Carleton College, in Northfield, Minnesota because it was close-to-but-not-quite the same as where they went to school. My freshman year, I lived in this dorm, third floor.\n\nThere was a small lake/pond outside the dorm that had the unfortunate quality of being ideal for a kind of algae growth, an algae that smelled so bad it permeated the entire experience of my freshman year. There were a lot of firsts in this dorm — my first kiss, my first drunk, my first real experience of trusting a friend, my first boyfriend, my first major adult depression, the recognition of personal power and the recognition of how little control I actually have over my life, the loss of my virginity — and all of those firsts have this background canvas of “smells like algae”.\n\nI also have a memory I cherish, laying on the floor of my new boyfriend’s dorm room and giggling hysterically as we both mocked and participated in his roommate’s attempt to speak in “fax” high-pitched squeals. Nerdy humor has always worked for me and sometimes I surprised myself with how much I miss those days.",
+    "order": 7,
+    "imagePath": "/paintings/houses/goodhue.jpg"
+  },
+  {
+    "slug": "watson-hall",
+    "title": "Watson Hall, Northfield",
+    "region": "Northfield",
+    "description": "",
+    "order": 8,
+    "imagePath": "/paintings/houses/watson-hall.jpg"
+  },
+  {
+    "slug": "faculty-club-carleton-college",
+    "title": "Faculty Club, Northfield",
+    "region": "Northfield",
+    "description": "I lived in this “dorm” during one half of my years in college with my best friend Anne. I put “dorm” in quotes because the housing is precisely what it sounds like — a re-purposed housing facility that was intended for faculty originally. If I remember correctly, it was pretty eccentric housing with lots of odd corners and dark wood paneling. It would be the perfect setting for a film noir mystery. I have mostly good memories of this place, although the persistent distortion of my memory is reflected in persistent distortion of the building itself.\n\nMy strongest memory of this room is the time that, inexplicably (but likely through extreme drunkenness) a male friend of mine passed out in the chair by the window until the wee hours of the morning. I woke up before him and noticed that he had a giant erection poking through his boxers while he slept…which presented me with the first opportunity I had ever had to really look closely at a man’s apparatus without the bearer of the erection being aware. I remember being fascinated, embarrassed and completely unprepared to handle anything gracefully. So I did what any sane human would do: I rolled over in bed and pretended to sleep until he woke up, put his pants on and left. I’ve never said a word about it until just now.",
+    "order": 9,
+    "imagePath": "/paintings/houses/faculty-club-carleton-college.jpg"
+  },
+  {
+    "slug": "bank-building-division-street",
+    "title": "Bank Building, Division Street, Northfield",
+    "region": "Northfield",
+    "description": "",
+    "order": 10,
+    "imagePath": "/paintings/houses/bank-building-division-street.jpg"
+  },
+  {
+    "slug": "ridgeway-drive",
+    "title": "Ridgeway Drive, Fairfax",
+    "region": "Fairfax",
+    "description": "",
+    "order": 11,
+    "imagePath": "/paintings/houses/ridgeway-drive.jpg"
+  },
+  {
+    "slug": "4th-street",
+    "title": "4th Street, San Rafael",
+    "region": "San Rafael",
+    "description": "",
+    "order": 12,
+    "imagePath": "/paintings/houses/4th-street.jpg"
+  },
+  {
+    "slug": "32nd-street",
+    "title": "32nd Street, Richmond",
+    "region": "Richmond",
+    "description": "",
+    "order": 13,
+    "imagePath": "/paintings/houses/32nd-street.jpg"
+  },
+  {
+    "slug": "20th-street",
+    "title": "20th Street, San Francisco",
+    "region": "San Francisco",
+    "description": "",
+    "order": 14,
+    "imagePath": "/paintings/houses/20th-street.jpg"
+  },
+  {
+    "slug": "dearborn-street",
+    "title": "Dearborn Street, San Francisco",
+    "region": "San Francisco",
+    "description": "",
+    "order": 15,
+    "imagePath": "/paintings/houses/dearborn-street.jpg"
+  },
+  {
+    "slug": "pacific-ave",
+    "title": "Pacific Ave, San Francisco",
+    "region": "San Francisco",
+    "description": "",
+    "order": 16,
+    "imagePath": "/paintings/houses/pacific-ave.jpg"
+  },
+  {
+    "slug": "adams-street",
+    "title": "Adams Street, Tucson",
+    "region": "Tucson",
+    "description": "",
+    "order": 17,
+    "imagePath": "/paintings/houses/adams-street.jpg"
+  },
+  {
+    "slug": "lucretia-court",
+    "title": "NW 22nd Place, Lucretia Court, Portland",
+    "region": "Portland",
+    "description": "",
+    "order": 18,
+    "imagePath": "/paintings/houses/lucretia-court.jpg"
+  },
+  {
+    "slug": "vancouver-ave",
+    "title": "N. Vancouver Ave, Portland",
+    "region": "Portland",
+    "description": "",
+    "order": 19,
+    "imagePath": "/paintings/houses/vancouver-ave.jpg"
+  },
+  {
+    "slug": "naito-parkway",
+    "title": "NW Naito Parkway, Portland",
+    "region": "Portland",
+    "description": "",
+    "order": 20,
+    "imagePath": "/paintings/houses/naito-parkway.jpg"
+  },
+  {
+    "slug": "macleay-gardens",
+    "title": "NW 29th Ave, MacLeay Gardens, Portland",
+    "region": "Portland",
+    "description": "This apartment was near Forest Park and I used to get up in the morning and run trails before my day started. It also had a grocery store and a library within easy walking distance and a killer electric heater that I would huddle near in the winter months. In the afternoons, the apartment would fill with the most incredible, beautiful, cold afternoon light – blue and ethereal.\n\nI moved from here when my partner and I decided to live together and get a place. Given the whole arc of the consequences of that decision, it’s difficult not to see that as a terrible mistake, although I know it’s unfair to look back that way at my own life. He told me I had pressured him into moving before he was ready and although I don’t remember it that way, I can’t say for certain he was wrong. A few weeks after I moved away from this house I experienced the first of what would become a recurring pattern for the next decade — a listless gravity well of depression that threatened my days with a terrible undertow of foreboding. As I recall, it lasted a month and I thought it was because I was gaining weight and needed to exercise more. I wish I had been self-aware and resilient enough at that time to know I was feeling grief and the loss of a safe, healing home. It would be another decade before I felt safe in my own home the way I did in this one.",
+    "order": 21,
+    "imagePath": "/paintings/houses/macleay-gardens.jpg"
+  },
+  {
+    "slug": "maplewood-road",
+    "title": "Maplewood Road, Portland",
+    "region": "Portland",
+    "description": "",
+    "order": 22,
+    "imagePath": "/paintings/houses/maplewood-road.jpg"
+  },
+  {
+    "slug": "hendricks-street",
+    "title": "Hendricks Street, Portland",
+    "region": "Portland",
+    "description": "",
+    "order": 23,
+    "imagePath": "/paintings/houses/hendricks-street.jpg"
+  },
+  {
+    "slug": "illinois-street",
+    "title": "Illinois Street, Portland",
+    "region": "Portland",
+    "description": "This is the house that my (now ex-) husband and I called “The Forever House”…which has become an irony that it’s still hard for me to have a sense of humor about. My best friend knew we were looking and suggested it, despite it being *just* out of our price range. Still, the minute we visited the house we both instinctively knew it was for us. There is a lovely stand of apple trees in the back yard, which is deep enough that you can’t see the house from the back corner of it. I have a vivid, visceral memory of lying on a blanket with my six month old son under those trees, watching bees pollinate everything during a sun-drenched summer afternoon.\n\nIt was also in this house that I spent two deeply cold, lonely years waiting for my marriage to heal. I am sure even today I would break into a cold sweat if I had to descend the steps into the basement it holds such pain for me. Moving out of this house was as difficult a step as I’ve ever had to take…and as such the whole of my attachment to it now has a distinctly bittersweet quality.",
+    "order": 24,
+    "imagePath": "/paintings/houses/illinois-street.jpg"
+  }
+]

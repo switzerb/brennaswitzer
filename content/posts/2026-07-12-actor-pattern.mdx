@@ -1,0 +1,107 @@
+---
+title: "The Actor Pattern"
+date: "2026-07-12"
+description: An engineer mentioned the "Actor pattern" in a distributed systems conversation, and so I wanted to learn more. Go's goroutines are basically a live demo of it.
+---
+
+
+An engineer I was working with mentioned the "Author pattern" while we were talking about a distributed system built in Go, full of goroutines. I nodded, wrote it down, and later discovered there is no such thing. What almost certainly happened: **Actor pattern**, misheard. Once I looked into it, the mix-up made a lot of sense — the actor model is one of the oldest, most direct answers to the exact problem concurrent Go code runs into.
+
+## The problem actors solve
+
+The usual way to share data across concurrent threads of execution is: a variable sits in memory, and multiple threads read and write it, coordinated by locks. This works, but it's fragile. Forget a lock, and you get a race. Hold two locks in different orders on two threads, and you get a deadlock. The complexity doesn't come from the data — it comes from *sharing* it.
+
+The actor model, introduced by Carl Hewitt in 1973, sidesteps this by refusing to share memory at all. An **actor** is a unit that owns some private state, and the *only* way to interact with that state is to send the actor a message. The actor reads messages from an inbox one at a time, processes them, and can only ever mutate its own state — never anyone else's. No shared memory means no locks, and no locks means no race conditions on that state, by construction rather than by discipline.
+
+Erlang built its whole runtime around this idea in the 80s. Akka brought it to the JVM. And Go, without ever calling it "the actor pattern," gives you goroutines and channels — which are close enough to actors and mailboxes that the pattern falls out almost for free.
+
+## Go: goroutine as actor, channel as mailbox
+
+Here's a genuinely tiny actor in Go: a counter that only goes up, guarded not by a mutex but by the fact that only one goroutine ever touches it.
+
+```go
+package main
+
+import "fmt"
+
+type message struct {
+	kind  string
+	reply chan int
+}
+
+func counterActor(inbox <-chan message) {
+	count := 0 // owned exclusively by this goroutine — nobody else may touch it
+	for msg := range inbox {
+		switch msg.kind {
+		case "increment":
+			count++
+		case "get":
+			msg.reply <- count
+		}
+	}
+}
+
+func main() {
+	inbox := make(chan message)
+	go counterActor(inbox)
+
+	inbox <- message{kind: "increment"}
+	inbox <- message{kind: "increment"}
+	inbox <- message{kind: "increment"}
+
+	reply := make(chan int)
+	inbox <- message{kind: "get", reply: reply}
+	fmt.Println("count:", <-reply) // 3
+}
+```
+
+`count` never appears outside `counterActor`. Every other goroutine that wants to touch it has to go through `inbox`, one message at a time, processed in order by the `for msg := range inbox` loop. That loop *is* the mailbox-processing step of the actor model — nothing fancier than a channel read in a for-loop.
+
+## The same idea, in TypeScript
+
+Go isn't the only place this shows up. The essential piece of the actor pattern isn't goroutines specifically — it's *private state plus a serialized mailbox*. That part translates directly, even single-threaded:
+
+```typescript
+type Message =
+  | { kind: "increment" }
+  | { kind: "get"; reply: (n: number) => void };
+
+function counterActor() {
+  let count = 0; // private — only this closure can ever touch it
+  const mailbox: Message[] = [];
+  let draining = false;
+
+  async function drain() {
+    if (draining) return;
+    draining = true;
+    while (mailbox.length > 0) {
+      const msg = mailbox.shift()!;
+      if (msg.kind === "increment") count++;
+      if (msg.kind === "get") msg.reply(count);
+    }
+    draining = false;
+  }
+
+  // "send" is the only way in — there is no other way to touch count
+  return function send(msg: Message) {
+    mailbox.push(msg);
+    drain();
+  };
+}
+
+const counter = counterActor();
+counter({ kind: "increment" });
+counter({ kind: "increment" });
+counter({ kind: "increment" });
+counter({ kind: "get", reply: (n) => console.log("count:", n) });
+```
+
+Add a `"decrement"` case, or fire a `get` before the increments finish queuing, and the order still comes out right — because messages are drained one at a time, in the order they arrived, same as the Go version.
+
+## Where the analogy breaks
+
+Go doesn't actually *enforce* actor isolation. Nothing stops another goroutine from closing over `count` directly, or from holding a pointer into an actor's state and mutating it behind the mailbox's back — the compiler won't stop you. It's a convention, not a guarantee. Erlang and Akka go further: processes/actors share literally nothing, not even the option to cheat, because the language runtime won't let a reference cross the boundary. In Go, "actor-shaped" concurrency is something you opt into and have to keep opting into, everywhere, by hand.
+
+## Related patterns
+
+If this felt familiar: a message like `{ kind: "increment" }` is basically a **Command** object, and an actor's mailbox is one specific, serialized way of implementing an **Observer**-style notification queue. More on both of those later in this series.

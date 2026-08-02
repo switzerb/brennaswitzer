@@ -1,0 +1,201 @@
+---
+title:  Python Cheatsheet
+date:   "2023-11-09"
+description: Because everyone needs a cheatsheet sometimes.
+---
+
+With all of the weirdness and intensity around interviewing for engineering jobs, I decided it would be both fun and helpful to dig into two skills that I thought might be prudent. First: ten finger touch typing. I am a pretty fast typist with my janky homegrown method, but I have also seen the advantage that touch typing confers to programmers. It frees up your brain to think more clearly about the problem domain, plus, weirdly not having to look down at your hands means you don't lose your place in the code as much.
+
+The second skill is doing things fast, in particular being able to move from idea to implementation quickly. I thought about using ruby which I have a lot of familiarity with, but having given hundreds of interviews over the years I have decided that Python is just objectively more useful. It isn't my favorite language (Kotlin is definitely in number one place), but unfortunately Kotlin just doesn't have the same level of adoption in the field and so Python popped to the top of the pile.
+
+This post, then, is the cheatsheet for me for all the language structures that I find myself looking up again and again so I can both practice and potentially to have handy during an interview.
+
+# Cheatsheet
+
+## A few reminders of the facts
+
+* Everything in python is an object, even scalars
+* Lists are ordered, dictionaries are not
+* There are no type declarations required. Python is dynamically (but strongly) typed.
+* Libraries are spelled "module" `import math` gives you them math module, for example
+
+## Useful Resources
+
+```python
+word = 'something'
+help(word.replace) # help will give you information about a method
+dir(word) # dir will give you docs for that object
+dir(str) # you can use an actual instance or a type
+```
+
+## Truth Value Testing
+
+* Any object can be tested for truthiness 
+* By default, an object is considered true unless its class defines either a `__bool__()` method that returns False or a `__len__()` method that returns zero 
+* None and False are falsy 
+* zero of any numeric type: `0, 0.0, 0j, Decimal(0), Fraction(0, 1)`
+* empty sequences and collections: `'', (), [], {}, set(), range(0)`
+
+## Numbers and Math
+There are three number types: `integer`, `floating point`, and `complex`. The constructors `int()`, `float()`, and `complex()` can be used to produce numbers of a specific type. Numbers are immutable.
+
+### Rounding
+`divmod(i)` will give you a quotient/remainder pair
+`round(i, j)` gives you precision where b is decimal places
+`ceil(i)` and `floor(i)` will round up or down to the nearest integer
+
+### Random
+You can use the random module to get random numbers
+`random.random()` gives you random number between 0 and 1
+`random.choice([1,2,3,4])` will pick randomly from a list
+
+## Strings and text manipulation
+Strings are a `sequence` a positionally ordered collection of objects, which means you can access them with positional operators. The brackets can have an expression as well as an integer value. They are also immutable - operations always produce a new copy.
+
+### Positional string access
+```python
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+print(alphabet[0]) # "a"
+print(alphabet[-1]) # "z"
+print(len(alphabet)) # 26
+print(alphabet[len(alphabet) - 8])
+```
+
+### Slicing and ranges
+You can also slice strings in a range, exclusive. `alphabet[1:3] # "bc"`
+
+### Useful string operations
+```python
+word = 'something'
+line = 'a,b,c,d'
+line.split(',')  # ['a', 'b', 'c', 'd']
+word.upper()    # SOMETHING
+word.lower()    # something
+word.isalpha()  # Content tests: isalpha, isdigit, etc.
+word.isdigit()  # Content tests: isalpha, isdigit, etc.
+     
+word.strip()    # Remove whitespace characters on right and left
+word.lstrip()    # Remove whitespace characters on left
+word.rstrip()    # Remove whitespace characters on right
+line.strip().split(',')# Combine two operations
+```
+
+### Quoting
+You can use single or double quotes. There is also triple quoting for multiline strings.
+```python
+word = 'something'
+word2 = "else"
+word3 = """
+    stuff
+    goes
+    {here}
+"""
+```
+
+You can use `r` to get a raw string, which is useful for path names: `path = r'C:\text\new'`
+
+Common string range operations
+```python
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+print(alphabet[23:]) # "xyz" - everything past the first (23:len(alphabet))
+print(alphabet[0:3]) # "abc" from start to position
+print(alphabet[:3])  # "abc" same as alphabet[0:3]
+print(alphabet[:-1]) # "abcdefghijklmnopqrstuvwxy" everything but last position (0:-1)
+print(alphabet[:]) # a copy of the string
+print(alphabet * 2) # duplicate the string
+```
+
+### Concatenation of strings
+
+```python
+s1 = 'Hello'
+s2 = 'World'
+
+s4 = s1 + s2
+print(s4)
+```
+
+## Lists
+Lists have no fixed type constraint and no fixed size; they can grow and shrink on demand. Lists are mutable and usually mutate the list in place, with some exceptions. Lists will still throw an error if you reference an index that does not exist.
+
+```python
+stuff = [1,2,3,4,5,"word"] # lists can be of different types
+print(stuff[0]) # Indexing by position
+print(stuff[:-1]) # Slicing a list returns a new list
+print(stuff + [4, 5, 6]) # Concat/repeat make new lists too
+print(stuff * 2) # repeats as a new list
+```
+
+### List comprehensions
+```python
+matrix = [[1, 2, 3],               # A 3 × 3 matrix, as nested lists
+          [4, 5, 6],               # Code can span lines if bracketed
+          [7, 8, 9]]
+
+print(matrix[1]) # [1,2,3]
+col2 = [row[1] for row in matrix] # selection by column
+print(col2) # [2,5,8]
+example = [row[1] for row in matrix if row[1] % 2 == 0] # with a conditional filter
+print(example) # [2,8]
+diagonal = [matrix[i][i] for i in range(len(matrix[0]))]
+print(diagonal) # [1,5,9]
+```
+
+List comprehensions as generators, for example: `generator = (sum(row) for row in matrix)`
+Can generate a set instead, for example: `generator = {sum(row) for row in matrix} # {24, 6, 15}`
+Or a dict, for example: `generator = {i : sum(matrix[i]) for i in range(3)} # {0: 6, 1: 15, 2: 24}` 
+
+## Dictionaries
+```python
+thing = {'a': 1, 'c': 3, 'b': 2}
+for key in sorted(thing):
+    print(thing[key])
+```
+
+## Functional programming
+
+### Passing functions as arguments
+```python
+def goodbye(name):
+    return "Goodbye, " + name + "!"
+
+
+def hello(name):
+    return "Hello, " + name + "!"
+
+
+def greet(func, name):
+    greeting = func(name)
+    print(greeting)
+
+
+greet(hello, "World")
+greet(goodbye, "World")
+```
+
+## Graphs and Trees
+
+# Using a Python dictionary to act as an adjacency list
+```python
+
+graph = {
+'5' : ['3','7'],
+'3' : ['2', '4'],
+'7' : ['8'],
+'2' : [],
+'4' : ['8'],
+'8' : []
+}
+
+visited = set() # Set to keep track of visited nodes of graph.
+
+def dfs(visited, graph, node):  #function for dfs
+    if node not in visited:
+    print (node)
+    visited.add(node)
+    for neighbour in graph[node]:
+        dfs(visited, graph, neighbour)
+
+print("Following is the Depth-First Search")
+dfs(visited, graph, '5')
+```

@@ -39,3 +39,8 @@ next-env.d.ts
 # ide
 .idea
 .vscode
+
+/app/generated/prisma
+.agents
+.claude
+skills-lock.json

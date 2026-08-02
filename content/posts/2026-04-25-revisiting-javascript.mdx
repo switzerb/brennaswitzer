@@ -1,0 +1,67 @@
+---
+title: Revisiting JavaScript
+date: "2026-04-25"
+description: In which javascript is re-examined because it's weirder than I thought.
+---
+
+
+```
+  const greet = (name: string): string => \`Hello,
+  \${name}!\`;
+  console.log(greet("world"));
+```
+
+## Prototypical inheritance.
+
+In JavaScript, every object has a hidden link to another object called its **prototype**. When you access a property on an object, JavaScript first looks at the object itself. If it doesn't find the property there, it walks up the prototype chain — checking the prototype, then the prototype's prototype, and so on — until it either finds the property or hits `null` at the top. This is why methods defined on `Array.prototype` are available on every array you create: your array doesn't own those methods, it just inherits them through the chain.
+
+The classic way to set this up is with constructor functions and the `new` keyword. When you call `new Foo()`, JavaScript creates a fresh object, sets its prototype to `Foo.prototype`, runs `Foo` with `this` pointing at the new object, and returns it. ES6 `class` syntax is just a cleaner way to write the same thing — under the hood, classes are still wiring up prototypes. The key thing to internalize is that inheritance in JavaScript is about **objects linking to other objects**, not classes copying behavior into subclasses the way languages like Java or C++ do.
+
+Every object lives on the heap as a data structure that holds two things: its own named properties (key-value pairs), and an internal slot called `[[Prototype]]` that holds a reference — essentially a memory address — pointing at another heap object. That reference is the link. When you write `const obj = {}`, the engine allocates a new object on the heap and sets its `[[Prototype]]` slot to point at `Object.prototype`, which is itself just another object sitting somewhere in memory. Nothing is copied; it's a pointer.
+
+You can make that link explicit with `Object.create(proto)`, which allocates a new object and sets its `[[Prototype]]` directly to whatever you pass in. Constructor functions and `class` do the same thing behind the scenes — `Foo.prototype` is an object that already exists in memory before you ever call `new Foo()`, and `new` just points the `[[Prototype]]` slot of your new object at it. You can inspect the link at runtime with `Object.getPrototypeOf(obj)`, or the older (non-standard but widely supported) `obj.__proto__`.
+
+```
+// animal is just a plain object on the heap.
+const animal = {
+  breathe() { return \`\${this.name} breathes\`; },
+};
+
+// dog's [[Prototype]] slot points at animal — nothing copied.
+const dog = Object.create(animal);
+dog.name = "Rex";
+dog.bark = function() { return \`\${this.name} barks\`; };
+
+// dog owns: name, bark
+// dog does NOT own: breathe — it's found by walking up to animal
+console.log("owns bark?",    Object.hasOwn(dog, "bark"));
+console.log("owns breathe?", Object.hasOwn(dog, "breathe"));
+
+// but the chain lookup finds it fine
+console.log(dog.breathe());
+console.log(dog.bark());
+
+// verify the link
+console.log("dog's prototype is animal:", Object.getPrototypeOf(dog) === animal);
+
+// class syntax does the exact same wiring
+class Cat {
+  name: string;
+  constructor(name: string) { this.name = name; }
+  purr() { return \`\${this.name} purrs\`; }
+}
+
+const cat = new Cat("Miso");
+console.log("cat's prototype is Cat.prototype:", Object.getPrototypeOf(cat) === Cat.prototype);
+console.log(cat.purr());
+```
+
+
+## The three parts of synchronous javascript execution
+
+As soon as  we start running our code, there is a global execution context.
+- thread of execution
+- memory storage variable environment
+
+
+the call stack is literally a data structure stack that pushes and pops execution contexts from functions. the whole thing is a function called global, really. and implicit wrapping function.

@@ -1,0 +1,97 @@
+---
+title:  Group By
+date:   "2020-12-12"
+description: Building up the toolkit -- group by is crazy useful.
+---
+
+I recently came across a situation in javascript where I needed to do a "pivot" on some data, which amounted to needing the `GROUP BY` functionality in SQL, or `groupBy` which is provided as standard in multiple languages like Kotlin. Javascript doesn't have that function out of the box and writing it ended up being an interesting little project to understand the nuances of that transformation. I'm going to step through it as simply as possible here to outline what I mean.
+
+In the simplest terms, the shape of the problem is to "pivot" a data structure around a key. It's a really common pattern with data...so common, in fact, that at first I was a little taken aback when I was building it that it wasn't simpler. The basic problem I had was: take a list of categories that each have an array of month, value pairs and show me how much value was in each month regardless of category.
+
+This was the simple test I started with, so you can see the starting and expected objects:
+
+```javascript
+it('group by month is correct', () => {
+    const categories = [
+        {
+            name: "Category One",
+            values: [
+                {month: "Jan", value: "5"},
+                {month: "Feb", value: "10"},]
+        },
+        {
+            name: "Category Two",
+            values: [
+                {month: "Jan", value: "10"},
+                {month: "Feb", value: "12"},]
+        },
+    ];
+    const actual = categoryTotals(categories);
+    const expected = [{month: 'Jan', value: 15}, {month: 'Feb', value: 22}];
+    expect(actual).toStrictEqual(expected);
+})
+```
+
+In even simpler languages, I started with a list of categories with month/value data and I *needed* to see a list of months with the sum of all it's relevant values. Pretty normal use case, right?
+
+Below is the code that I ended up with, which is really three separate steps. 
+1. First, aggregate all the values into one structure, in this case from the test `[{"Jan",5},{"Feb",10},{"Jan",10},{"Feb",12}]`. The idea here is to make it all one thing, flattened with just the data we want so it's easy to work with.
+   
+1. Second, a `groupBy` generic function that takes all the categories and groups them by month as one structure. 
+   
+1. Third, a `reduce` over the entries in the map returned from `groupBy` to sum the values in each month into one sum.
+
+```javascript
+const groupBy = (items, extractKey) => {
+    return items.reduce((a, v) => {
+        const k = extractKey(v);
+        return {...a, [k]: (a[k] || []).concat(v)};
+    }, {});
+}
+
+export const categoryTotals = (cat) => {
+    const aggregate_values = cat.reduce((a,sc)=> a.concat(sc.values), []);
+
+    return Object.entries(groupBy(aggregate_values, (v) => v.month))
+        .reduce((result, [k, v]) => result.concat({
+            month: k,
+            value: v.reduce((a, n) => a + Number(n.value), 0)
+        }), []);
+}
+```
+
+One thing you might notice is that `groupBy` here as a function takes two parameters, the array of items to work with and a `extractKey` function. This format was suggested to me by a more experienced engineer and I immediately saw how it was superior to the way I was trying to initially write this function. By passing in `extractKey` to the `groupBy` function, then `groupBy` doesn't need to know *anything* about the internal structure of the array it's iterating over. We simply give it the methodology for getting the key we want to use.
+
+So in this case, you can see I use an anonymous function `(v) => v.month` to extract the "month" value. If my data structure were more complex, I could have a more complex `extractKey` without having to refactor anything.
+
+For someone like me who started on this engineering path writing a whole bunch of raw sql into my code ([remember writing code like this??](https://www.w3schools.com/php/php_mysql_insert.asp)) it was sort of shocking how much complexity was wrapped up in the SQL version of this same transformation idea. In SQL this same idea might look like, if you had a (fictional) table called `Subcategories` with month and value columns.
+
+```sql
+SELECT SUM(value), Month
+FROM Subcategories
+GROUP BY Month;
+```
+
+Pretty elegant language, right? Since the last half-decade of working with mostly `JSON` formatted data coming through a REST API (or, lately, graphQL), getting a straightforward rowset back from a database feels magically intuitive.
+
+If javascript *did* have a native groupBy, it might look something like the one in Kotlin. Although here the data structures look a bit different, it's the same concept applied. Here there are a list of four `Pair` instances that are a tuple of month, value pairs. The `Pair` has no semantic in this case and is just a way to group related data, so in the "real" world this is much more likely to be a `data class Category` with a name and an array of months...but for the sake of example this is clearer. 
+
+Notice how you would still need the `sum` step after grouping. Here we end up with a `List` of `List`s of `Pairs` after we group, so it would still be necessary to iterate over the entries in `byMonth` and reduce (and then again) to get each month to have a sum in it.
+
+```kotlin
+val categories = listOf(
+    Pair("Jan", 5), 
+    Pair("Jan",10), 
+    Pair("Feb", 10), 
+    Pair("Feb",12)
+)
+val byMonth = categories
+    .groupBy { it.first } // groups by pair first value, e.g. month
+
+println(byMonth.keys) // ["Jan", "Feb"]
+println(byMonth.values) // [[(Jan, 5), (Jan, 10)], [(Feb, 10), (Feb, 12)]]
+```
+
+One other thing to note about all of this in my javascript implementation (which could use some better error handling *cough*) is that I have chosen here to use immutable structures and functional programming. In simpler terms, I `concat` onto the array instead of `push`ing. For me, the safety of not mutating the structures feels like the right choice and I didn't need to worry about performance in the context I was in. It was more important to not leak out a returned value that wasn't guaranteed to be immutable or accidentally mutate the passed-in array.
+
+However, making all these copies is definitely more memory-intensive and slower. If I were building a `groupBy` that was going to be used in unknown contexts as a library method, I would reimplement to optimize for performance and keep the making-copies to a minimum. It would be a rather large bummer to pass in a massive array to `groupBy` and have the whole system slow to a crawl or crash as the system ran out of memory.

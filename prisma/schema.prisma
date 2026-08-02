@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  date        DateTime
+  excerpt     String?
+  filePath    String   // Path to MDX file, e.g., "content/posts/2019-11-04-beginnings.mdx"
+  published   Boolean  @default(false)
+  tags        String?  // Comma-separated for now, can normalize later
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Painting {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  collection  String   // "sketches", "houses", "abstract-landscape", "still-life"
+  imagePath   String   // Path to image file
+  date        DateTime?
+  medium      String?
+  dimensions  String?
+  region      String?  // Gallery section grouping, e.g. "Portland" (houses) or "Tuscany" (a series within a collection)
+  description String?
+  order       Int      @default(0) // For manual ordering within collections
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

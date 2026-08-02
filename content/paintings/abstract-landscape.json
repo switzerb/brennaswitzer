@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "gabriel-one",
+    "title": "Gabriel One",
+    "region": "Gabriel",
+    "medium": "acrylic on paper",
+    "order": 0,
+    "imagePath": "/paintings/abstract-landscape/gabriel_one.jpg"
+  },
+  {
+    "slug": "gabriel-two",
+    "title": "Gabriel Two",
+    "region": "Gabriel",
+    "medium": "acrylic on paper",
+    "order": 1,
+    "imagePath": "/paintings/abstract-landscape/gabriel_two.jpg"
+  },
+  {
+    "slug": "tuscany-one",
+    "title": "Tuscany One",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 2,
+    "imagePath": "/paintings/abstract-landscape/tuscany_one.jpg"
+  },
+  {
+    "slug": "tuscany-two",
+    "title": "Tuscany Two",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 3,
+    "imagePath": "/paintings/abstract-landscape/tuscany_two.jpg"
+  },
+  {
+    "slug": "tuscany-three",
+    "title": "Tuscany Three",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 4,
+    "imagePath": "/paintings/abstract-landscape/tuscany_three.jpg"
+  },
+  {
+    "slug": "tuscany-four",
+    "title": "Tuscany Four",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 5,
+    "imagePath": "/paintings/abstract-landscape/tuscany_four.jpg"
+  },
+  {
+    "slug": "tuscany-five",
+    "title": "Tuscany Five",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 6,
+    "imagePath": "/paintings/abstract-landscape/tuscany_five.jpg"
+  },
+  {
+    "slug": "tuscany-six",
+    "title": "Tuscany Six",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 7,
+    "imagePath": "/paintings/abstract-landscape/tuscany_six.jpg"
+  },
+  {
+    "slug": "tuscany-seven",
+    "title": "Tuscany Seven",
+    "region": "Tuscany",
+    "medium": "acrylic on paper",
+    "order": 8,
+    "imagePath": "/paintings/abstract-landscape/tuscany_seven.jpg"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "slug": "iguana",
+    "title": "Iguana",
+    "medium": "ink and watercolor",
+    "order": 0,
+    "imagePath": "/paintings/sketches/iguana.jpeg"
+  },
+  {
+    "slug": "tuscany-study-1",
+    "title": "Tuscany Study 1",
+    "region": "Tuscany Study",
+    "medium": "watercolor, gouache, and pencil",
+    "order": 1,
+    "imagePath": "/paintings/sketches/tuscany_study_1.jpg"
+  },
+  {
+    "slug": "tuscany-study-2",
+    "title": "Tuscany Study 2",
+    "region": "Tuscany Study",
+    "medium": "watercolor, gouache, and pencil",
+    "order": 2,
+    "imagePath": "/paintings/sketches/tuscany_study_2.jpg"
+  },
+  {
+    "slug": "tuscany-study-3",
+    "title": "Tuscany Study 3",
+    "region": "Tuscany Study",
+    "medium": "watercolor, gouache, and pencil",
+    "order": 3,
+    "imagePath": "/paintings/sketches/tuscany_study_3.jpg"
+  },
+  {
+    "slug": "tuscany-study-4",
+    "title": "Tuscany Study 4",
+    "region": "Tuscany Study",
+    "medium": "watercolor, gouache, and pencil",
+    "order": 4,
+    "imagePath": "/paintings/sketches/tuscany_study_4.jpg"
+  }
+]
