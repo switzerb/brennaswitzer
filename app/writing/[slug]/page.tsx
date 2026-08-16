@@ -30,13 +30,13 @@ export default async function PostPage({
   const { content } = await getPostContent(post.filePath);
 
   return (
-    <div className="min-h-screen py-16">
+    <div className="min-h-screen py-12">
       <article className="max-w-3xl mx-auto px-8">
         <time className="text-sm text-zinc-500 dark:text-zinc-500">
           {formatDate(post.date)}
         </time>
-        <h1 className="text-4xl font-light mt-1 mb-8">{post.title}</h1>
-        <div className="prose dark:prose-invert">{content}</div>
+        <h1 className="text-4xl font-light mt-1 mb-6">{post.title}</h1>
+        <div className="post-content">{content}</div>
       </article>
     </div>
   );

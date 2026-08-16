@@ -3,7 +3,7 @@ import { POST_SERIES } from "@/app/lib/postSeries";
 
 export function PostSubnav({ active }: { active?: string }) {
   return (
-    <nav className="flex flex-wrap gap-x-6 gap-y-2 mb-12 text-sm">
+    <nav className="flex flex-wrap gap-x-6 gap-y-2 mb-8 text-sm">
       <Link
         href="/writing"
         className={`transition-colors hover:text-accent ${
