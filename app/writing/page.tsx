@@ -17,7 +17,7 @@ export default async function WritingPage() {
         </p>
 
         <PostSubnav />
-        <PostList posts={posts} />
+        <PostList posts={posts} featureFirst />
       </main>
     </div>
   );
