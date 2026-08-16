@@ -23,15 +23,22 @@ function parseDate(value: string): Date {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
-async function main() {
-  const files = readdirSync(postsDir).filter((f) => f.endsWith(".mdx"));
+function findMdxFiles(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return findMdxFiles(fullPath);
+    return entry.name.endsWith(".mdx") ? [fullPath] : [];
+  });
+}
 
-  for (const file of files) {
-    const fullPath = path.join(postsDir, file);
+async function main() {
+  const files = findMdxFiles(postsDir);
+
+  for (const fullPath of files) {
     const { data } = matter(readFileSync(fullPath, "utf8"));
 
-    const nameWithoutDate = file
-      .replace(/\.mdx$/, "")
+    const nameWithoutDate = path
+      .basename(fullPath, ".mdx")
       .replace(/^\d{4}[-_]\d{2}[-_]\d{2}-/, "");
     const slug = slugify(nameWithoutDate);
 
@@ -39,7 +46,8 @@ async function main() {
       title: data.title as string,
       date: parseDate(data.date as string),
       excerpt: (data.description as string) ?? null,
-      filePath: `content/posts/${file}`,
+      series: path.basename(path.dirname(fullPath)),
+      filePath: path.relative(process.cwd(), fullPath),
       published: true,
     };
 

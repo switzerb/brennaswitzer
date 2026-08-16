@@ -16,7 +16,8 @@ model Post {
   title       String
   date        DateTime
   excerpt     String?
-  filePath    String   // Path to MDX file, e.g., "content/posts/2019-11-04-beginnings.mdx"
+  series      String   // Series slug, e.g., "engineering", "conversations"
+  filePath    String   // Path to MDX file, e.g., "content/posts/engineering/beginnings.mdx"
   published   Boolean  @default(false)
   tags        String?  // Comma-separated for now, can normalize later
   createdAt   DateTime @default(now())

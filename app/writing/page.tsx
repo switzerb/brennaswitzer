@@ -1,9 +1,6 @@
-import Link from "next/link";
 import { prisma } from "@/app/lib/prisma";
-
-function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
+import { PostSubnav } from "@/app/components/PostSubnav";
+import { PostList } from "@/app/components/PostList";
 
 export default async function WritingPage() {
   const posts = await prisma.post.findMany({
@@ -12,35 +9,15 @@ export default async function WritingPage() {
   });
 
   return (
-    <div className="min-h-screen py-16">
+    <div className="min-h-screen py-12">
       <main className="max-w-3xl mx-auto px-8">
-        <h1 className="text-5xl font-light mb-4">Merge Anxiety</h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-12">
+        <h1 className="text-5xl font-light mb-2">Merge Anxiety</h1>
+        <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8">
           Technical writing on software, systems, and craft
         </p>
 
-        <div className="space-y-8">
-          {posts.map((post) => (
-            <article key={post.slug}>
-              <Link
-                href={`/writing/${post.slug}`}
-                className="group block hover:bg-zinc-50 dark:hover:bg-zinc-900 -mx-4 px-4 py-4 transition-colors"
-              >
-                <time className="text-sm text-zinc-500 dark:text-zinc-500">
-                  {formatDate(post.date)}
-                </time>
-                <h2 className="text-2xl font-light mt-1 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
-                  {post.title}
-                </h2>
-                {post.excerpt && (
-                  <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-                    {post.excerpt}
-                  </p>
-                )}
-              </Link>
-            </article>
-          ))}
-        </div>
+        <PostSubnav />
+        <PostList posts={posts} featureFirst />
       </main>
     </div>
   );
