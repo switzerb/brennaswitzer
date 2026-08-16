@@ -46,6 +46,7 @@ async function main() {
       title: data.title as string,
       date: parseDate(data.date as string),
       excerpt: (data.description as string) ?? null,
+      series: path.basename(path.dirname(fullPath)),
       filePath: path.relative(process.cwd(), fullPath),
       published: true,
     };
