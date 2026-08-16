@@ -37,5 +37,12 @@
     "medium": "watercolor, gouache, and pencil",
     "order": 4,
     "imagePath": "/paintings/sketches/tuscany_study_4.jpg"
+  },
+  {
+    "slug": "not-lake-house",
+    "title": "Not Lake House",
+    "medium": "watercolor",
+    "order": 5,
+    "imagePath": "/paintings/sketches/not_lake_house.jpg"
   }
 ]
