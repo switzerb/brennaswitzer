@@ -1,7 +1,7 @@
 import {PropsWithChildren} from "react";
 
 interface MessageProps {
-    speaker: 'me' | 'ChatGPT'
+    speaker: 'me' | 'ChatGPT' | 'Claude'
     children: React.ReactNode
 }
 
@@ -16,6 +16,13 @@ export function Message({ speaker, children }: MessageProps) {
             </div>
         )
     }
+
+    if(speaker === 'Claude') return (
+        <div className="mt-6 first:mt-0">
+            <span className="sr-only">Claude: </span>
+            <div className="[&>p]:mt-2 [&>p:first-child]:mt-0">{children}</div>
+        </div>
+    )
 
     return (
         <div className="mt-6 first:mt-0">
