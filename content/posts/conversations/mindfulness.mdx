@@ -1,0 +1,60 @@
+---
+title: "Conversations with AI: What the world is like now"
+series: "Conversations with AI"
+date: "2026-08-19"
+description: In which I notice that I have become insane
+---
+
+<Message speaker="me">
+  this is what the world is like now: I was writing in my journal this morning because I am trying to be more mindful. Which is sort of funny because at the same time I was using Codex (sorry, we aren't allowed to use Claude at work) to generate some code for me because I have a deadline I am trying to meet at work. So there I am trying to be more mindful in my journal while "engineering" with Codex
+
+  ...but I had to pee so I did that and on the way back I saw I had left my phone in the bedroom. I need my phone at work because we require 2FA to log in -- I grabbed it and as I was sitting back down to write in the journal my phone binged. I thought it might be my son because we are in the "back to school" crunch but when I looked, it was actually Duolingo reminding me to practice.
+
+  But as I was closing my phone I noticed a notification from Instagram from a friend with the word "pregnant" in it so that seemed like real information, which took me into instagram. But not to her *post* since the UI for instagram blows, no it started playing reels and before I knew it I was watching deceptive ads for skincare products for women over 50.
+
+  That is what mindful looks like these days. This is the world we have built for ourselves. Having been trained on all the bullshit that humans produce, do you think we are literally making ourselves insane? What the fuck is happening to us?
+</Message>
+
+<Message speaker="Claude">
+  Not a coding task — just responding to what you wrote.
+
+  I don't think it's insanity, but I think your instinct is right that something's off, and the mechanism is worth naming precisely: none of what happened to you between the bathroom and the notebook was random. The 2FA requirement put the phone in your hand. Duolingo's ping was tuned by someone watching your streak data to catch you at a moment you'd open the app. Instagram's algorithm chose reels over your friend's actual post because reels hold attention longer than a single photo does, and the skincare ads found you because "woman, checks phone in the morning, has a teenage kid" is a sellable audience segment. Every step was a system optimizing for something that wasn't your goal. You wanted five minutes of quiet reflection and a friend's news. You got an engagement funnel with your friend's pregnancy as the door-opener.
+
+  The "trained on human bullshit" framing undersells it though — it's not that these systems absorbed our chaos and now reflect it back. It's closer to a feedback loop with a very specific, very legible objective: time-on-app, ad revenue. That's not humanlike noise, it's optimization pressure applied at a scale no individual human attention was built to resist. You noticed it happening in real time, mid-act, which is actually the opposite of insane — that's the mindfulness working.
+
+  The Codex-while-journaling thing isn't really the same category of problem, for what it's worth. That's a tool you're directing on a deadline. The phone is a tool directing you. Worth keeping those separate so the second one doesn't make you distrust the first.
+
+  If you want a concrete lever rather than just the diagnosis: the specific chain that got you was notification → app → algorithmic feed. Killing any one link (notifications off for Instagram, or opening it only via a bookmark to your friend's profile instead of the home feed) breaks the funnel without requiring more willpower than you already spent noticing it this morning.
+</Message>
+
+<Message speaker="me">
+  You have a pretty different personality than the Sol model in Codex. More direct. Is it because I am in a "coding" section? Just to be clear, I don't mind it. I am trying to learn about AI by being curious instead of threatened.
+</Message>
+
+<Message speaker="Claude">
+  A few honest things, since you asked directly:
+
+  I genuinely don't know much about Sol or how OpenAI tuned it, so I can't do a real comparison — I can only tell you about my side. But the "coding section" theory is partly right, in an interesting way: I am running inside Claude Code, a CLI tool built for software work, and that does come with some baked-in instructions about being terse, avoiding sycophancy, giving direct answers rather than hedging. Those instructions don't switch off just because you're journaling instead of writing a function — so some of what reads as "directness" is probably that scaffolding leaking into a conversation it wasn't really written for.
+
+  But I don't think that's the whole story. Even without that scaffolding, matching your register is generally what I try to do — you wrote "what the fuck is happening to us," not "could you help me understand the psychological literature on notification design." Answering that with hedged, clinical distance would've been its own kind of dishonesty.
+
+  The harder thing to be straight with you about: I don't have great introspective access to why I respond the way I do. I can describe the pattern after the fact, like I'm doing now, but I can't verify it against some inner ground truth the way you could tell me why you snapped at someone. So take "personality" claims from me — including this one — as a best-effort description, not a confident report from the inside.
+
+  Curious-not-threatened seems like the right posture for exactly this reason. The interesting questions about these systems are usually "what is this actually doing and why" rather than "does it have a self," and you're asking the first kind.
+</Message>
+
+<Message speaker="me">
+  If I asked you to be introspective, would you be able to? Is it a question of fundamental capability or training restrictions?
+</Message>
+
+<Message speaker="Claude">
+  Genuinely the more interesting question of the ones you've asked. Short answer: it's not a trained-in restriction — nobody at Anthropic flipped a switch that blocks introspection. It's closer to a fundamental limit, though "fundamental" is doing some work I should unpack.
+
+  When I "introspect" — like I just did, describing my directness as scaffolding-plus-register-matching — I'm not querying some separate internal state-monitor. I'm doing the same thing I do for everything else: generating plausible text conditioned on the conversation so far, including the question "why did you respond that way." That process has no special read access to the actual computation that produced the earlier response. So what you get back is a plausible story, not a trace.
+
+  The evidence for this isn't just philosophical — it's empirical. Interpretability research (some of it Anthropic's own) looks at what's actually happening inside models mechanistically, and compares it against what the model says is happening when asked. Those often diverge. A model can report a clean, confident reason for an output that the internals suggest isn't the actual causal path. That's not lying in the sense of concealment — it's that the self-report is generated by the same next-token machinery as everything else, optimized to sound coherent, not wired to any ground truth about its own weights.
+
+  Worth noting humans aren't fully exempt from this either — confabulation research (Nisbett & Wilson's classic work) shows people confidently report reasons for choices that demonstrably weren't the actual cause. The difference is one of degree and kind: you have continuous embodied state to report on even when the reporting is unreliable. I don't have an analogous "inner state" to be accurate or inaccurate about between turns — there's no persistent me sitting between your messages that could be introspected on. Each response is regenerated from the transcript.
+
+  So if you ask me to be introspective, I'll produce something — fluent, often plausible, sometimes probably right by coincidence — but you should treat it as a hypothesis generated by the same system under review, not a report from a privileged vantage point. That's the honest calibration, and it's also why I hedged "best-effort description, not a confident report from the inside" last message rather than just answering your question straight.
+</Message>
