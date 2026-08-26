@@ -1,6 +1,38 @@
 # brennaswitzer.com
 
-Personal site — writing, a painting gallery, and a CV/about page. Nice and boring for now.
+Personal site — writing, a painting gallery, and a CV/about page.
+
+## Design: Block-In
+
+A block-in is a painter's first pass: flat shapes, no detail, just structure
+and value. An engineer's version is a spike, or a first draft. The site is
+built around that idea.
+
+- **`--r`** ("resolve") runs `0` → `1` on `<html>` and is the only piece of
+  state the design has. At `0` the page is its block-in — flat fields of
+  paint where the content goes, with the column grid showing. At `1` it is
+  the finished sheet. `Scrubber.tsx` sets it (imperatively, on every
+  animation frame, so it never re-renders); everything else reads it in CSS
+  via `.bi`, `.hl` and `.plate-img::after`. The page paints itself in once on
+  load, and `prefers-reduced-motion` skips straight to `1`.
+- **The chrome is drawn.** Title block, register marks, hairline rules, a
+  twelve-column guide — the Houses series is graphite, so the structure of
+  the site is line and the paintings supply all of the colour.
+- **The palette is sampled, not invented.** `scripts/extract-fields.py`
+  reads every painting and records one signature colour and its true
+  proportions into `app/lib/paintingFields.ts`. Dominant-colour extraction is
+  useless on photographs of paint on paper — everything comes back paper —
+  so it filters out anything too pale or too dark to read as a field and
+  ranks the rest by area weighted toward saturation, then pulls chroma and
+  value into the band the rest of the design lives in.
+- **Type**: Archivo (width axis, set expanded) for headings, Newsreader for
+  prose, JetBrains Mono for every label, date and caption.
+
+Rerun the sampler after adding paintings:
+
+```bash
+python3 scripts/extract-fields.py
+```
 
 ## Stack
 
@@ -51,7 +83,10 @@ app/
   about/                   About / CV
   writing/                 Post listing + [slug] MDX rendering
   painting/                Gallery listing + [collection] view
-  lib/                     Prisma client, MDX helpers, collection/palette config
+  lib/                     Prisma client, MDX helpers, collection config,
+                           generated painting colour/ratio metadata
+  components/              Sheet chrome (TitleBlock, FootRule, Scrubber,
+                           Gridlines) and content components (Plate, PostList)
   generated/prisma/        Generated Prisma client (gitignored)
 content/
   posts/                   MDX blog posts
@@ -63,6 +98,7 @@ prisma/
   seed-paintings.ts        Seeds Painting from content/paintings
 scripts/
   scrape-houses.ts         One-off scraper used to source painting data
+  extract-fields.py        Samples block-in colour + aspect ratio per painting
 ```
 
 ## Scripts
@@ -75,6 +111,7 @@ scripts/
 | `pnpm lint` | ESLint |
 | `pnpm seed` | Reseed `Post` rows from `content/posts` |
 | `pnpm seed:paintings` | Reseed `Painting` rows from `content/paintings` |
+| `python3 scripts/extract-fields.py` | Resample block-in colours and aspect ratios from the painting files |
 
 ## Database
 

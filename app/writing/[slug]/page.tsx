@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
 import { getPostContent } from "@/app/lib/mdx";
+import { seriesTitle } from "@/app/lib/postSeries";
 
 function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10);
+  return date.toISOString().slice(0, 10).replace(/-/g, ".");
 }
 
 export async function generateStaticParams() {
@@ -14,6 +16,19 @@ export async function generateStaticParams() {
   });
 
   return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await prisma.post.findUnique({ where: { slug } });
+  return {
+    title: post?.title ?? "Writing",
+    description: post?.excerpt ?? undefined,
+  };
 }
 
 export default async function PostPage({
@@ -42,32 +57,33 @@ export default async function PostPage({
   ]);
 
   return (
-    <div className="min-h-screen py-12">
-      <article className="max-w-3xl mx-auto px-8">
-        <time className="text-sm text-zinc-500 dark:text-zinc-500">
-          {formatDate(post.date)}
-        </time>
-        <h1 className="text-4xl font-light mt-1 mb-6">{post.title}</h1>
+    <div className="sheet-pad">
+      <article className="article">
+        <header className="article-head">
+          <div className="mono" style={{ display: "flex", gap: "1.2rem" }}>
+            <time dateTime={post.date.toISOString()}>
+              {formatDate(post.date)}
+            </time>
+            <Link
+              href={`/writing/series/${post.series}`}
+              style={{ color: "var(--accent)", textDecoration: "none" }}
+            >
+              {seriesTitle(post.series) ?? post.series}
+            </Link>
+          </div>
+          <h1>{post.title}</h1>
+        </header>
+
         <div className="post-content">{content}</div>
 
-        <nav className="flex justify-between mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+        <nav className="pager mono">
           {newer ? (
-            <Link
-              href={`/writing/${newer.slug}`}
-              className="text-sm hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
-            >
-              &larr; {newer.title}
-            </Link>
+            <Link href={`/writing/${newer.slug}`}>&larr; {newer.title}</Link>
           ) : (
             <span />
           )}
           {older ? (
-            <Link
-              href={`/writing/${older.slug}`}
-              className="text-sm text-right hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
-            >
-              {older.title} &rarr;
-            </Link>
+            <Link href={`/writing/${older.slug}`}>{older.title} &rarr;</Link>
           ) : (
             <span />
           )}

@@ -1,66 +1,58 @@
-import Link from "next/link";
-import Image from "next/image";
+import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
 import { PAINTING_COLLECTIONS } from "@/app/lib/paintingCollections";
+import { Plate } from "@/app/components/Plate";
+
+export const metadata: Metadata = {
+  title: "Plates",
+  description:
+    "Acrylic and watercolour on paper, and a graphite series of every place I have ever lived.",
+};
 
 export default async function PaintingPage() {
-  const covers = await prisma.painting.findMany({
-    where: { collection: { in: PAINTING_COLLECTIONS.map((c) => c.slug) } },
-    orderBy: { order: "desc" },
-    distinct: ["collection"],
-  });
-  const coverByCollection = new Map(covers.map((c) => [c.collection, c]));
+  const [covers, counts] = await Promise.all([
+    prisma.painting.findMany({
+      where: { collection: { in: PAINTING_COLLECTIONS.map((c) => c.slug) } },
+      orderBy: { order: "desc" },
+      distinct: ["collection"],
+    }),
+    prisma.painting.groupBy({ by: ["collection"], _count: true }),
+  ]);
+
+  const coverBy = new Map(covers.map((c) => [c.collection, c]));
+  const countBy = new Map(counts.map((c) => [c.collection, c._count]));
 
   return (
-    <div className="min-h-screen py-16">
-      <main className="max-w-4xl mx-auto px-8">
-        <h1 className="text-5xl font-light mb-12">Painting</h1>
+    <div className="sheet-pad">
+      <div className="measure">
+        <header className="sheet-head">
+          <h1>Plates</h1>
+          <p className="blurb">
+            Acrylic and watercolour on paper, and one long graphite series: a
+            drawing of every place I have ever lived.
+          </p>
+        </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="collection-grid">
           {PAINTING_COLLECTIONS.map((collection) => {
-            const cover = coverByCollection.get(collection.slug);
+            const cover = coverBy.get(collection.slug);
+            const count = countBy.get(collection.slug) ?? 0;
+            if (!cover) return null;
             return (
-              <Link
+              <Plate
                 key={collection.slug}
+                imagePath={cover.imagePath}
+                title={collection.title}
+                meta={`${count} ${count === 1 ? "work" : "works"}`}
                 href={`/painting/${collection.slug}`}
-                className="group block"
-              >
-                <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
-                  {cover && (
-                    <Image
-                      src={cover.imagePath}
-                      alt=""
-                      fill
-                      loading="eager"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  )}
-                  {cover && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  )}
-                  <div className="absolute inset-x-0 bottom-0 p-6">
-                    <h2
-                      className={`text-2xl transition-opacity group-hover:opacity-80 ${
-                        cover
-                          ? "text-white"
-                          : "text-zinc-900 dark:text-zinc-100"
-                      }`}
-                    >
-                      {collection.title}
-                    </h2>
-                    {!cover && (
-                      <p className="text-xs uppercase tracking-wide text-zinc-400 dark:text-zinc-600 mt-1">
-                        Coming soon
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                aspect="4 / 3"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                priority
+              />
             );
           })}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
