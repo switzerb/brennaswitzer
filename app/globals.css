@@ -15,14 +15,16 @@
    ========================================================================== */
 
 :root {
-  /* ground and ink — drawing paper, graphite. Deliberately not cream. */
-  --paper: #e7e5de;
-  --sunk: #dedbd2;
-  --graphite: #23231f;
-  --soft: #5d5d55;
-  --rule: rgb(35 35 31 / 0.17);
-  --rule-strong: rgb(35 35 31 / 0.36);
-  --bar: rgb(35 35 31 / 0.22);
+  /* ground and ink — drawing paper, graphite. Deliberately not cream, and
+     carrying about half the warmth it started with: enough of a cast that
+     the ground reads as paper, not enough to tint the paintings on it. */
+  --paper: #e5e4e0;
+  --sunk: #dbdad5;
+  --graphite: #222220;
+  --soft: #5b5b57;
+  --rule: rgb(34 34 32 / 0.17);
+  --rule-strong: rgb(34 34 32 / 0.36);
+  --bar: rgb(34 34 32 / 0.22);
 
   /* sampled from the paintings — see scripts/extract-fields.py */
   --c-terra: #a46657;
@@ -45,13 +47,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #1a1a18;
-    --sunk: #232320;
-    --graphite: #e9e7e0;
-    --soft: #97958c;
-    --rule: rgb(233 231 224 / 0.16);
-    --rule-strong: rgb(233 231 224 / 0.34);
-    --bar: rgb(233 231 224 / 0.2);
+    --paper: #191919;
+    --sunk: #222221;
+    --graphite: #e7e6e2;
+    --soft: #94938f;
+    --rule: rgb(231 230 226 / 0.16);
+    --rule-strong: rgb(231 230 226 / 0.34);
+    --bar: rgb(231 230 226 / 0.2);
     --accent: #8fa5c9;
 
     color-scheme: dark;
