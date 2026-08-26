@@ -14,7 +14,15 @@ const LINKS = [
 
 export default async function Home() {
   const paintings = await prisma.painting.findMany({
-    select: { imagePath: true, title: true, medium: true, collection: true, slug: true },
+    select: {
+      imagePath: true,
+      title: true,
+      medium: true,
+      collection: true,
+      slug: true,
+      field: true,
+      ratio: true,
+    },
   });
   const featured = shuffle(paintings).slice(0, 4);
 
@@ -77,6 +85,8 @@ export default async function Home() {
               imagePath={painting.imagePath}
               title={painting.title}
               meta={painting.medium ?? undefined}
+              field={painting.field}
+              ratio={painting.ratio}
               href={`/painting/${painting.collection}/${painting.slug}`}
               sizes="(max-width: 1000px) 45vw, 20vw"
               priority={i < 2}

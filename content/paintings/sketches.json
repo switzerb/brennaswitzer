@@ -4,7 +4,9 @@
     "title": "Iguana",
     "medium": "ink and watercolor",
     "order": 0,
-    "imagePath": "/paintings/sketches/iguana.jpeg"
+    "imagePath": "/paintings/sketches/iguana.jpeg",
+    "field": "#8A6548",
+    "ratio": 1.3281
   },
   {
     "slug": "tuscany-study-1",
@@ -12,7 +14,9 @@
     "region": "Tuscany Study",
     "medium": "watercolor, gouache, and pencil",
     "order": 1,
-    "imagePath": "/paintings/sketches/tuscany_study_1.jpg"
+    "imagePath": "/paintings/sketches/tuscany_study_1.jpg",
+    "field": "#9F7F53",
+    "ratio": 2.0468
   },
   {
     "slug": "tuscany-study-2",
@@ -20,7 +24,9 @@
     "region": "Tuscany Study",
     "medium": "watercolor, gouache, and pencil",
     "order": 2,
-    "imagePath": "/paintings/sketches/tuscany_study_2.jpg"
+    "imagePath": "/paintings/sketches/tuscany_study_2.jpg",
+    "field": "#625E5D",
+    "ratio": 0.9243
   },
   {
     "slug": "tuscany-study-3",
@@ -28,7 +34,9 @@
     "region": "Tuscany Study",
     "medium": "watercolor, gouache, and pencil",
     "order": 3,
-    "imagePath": "/paintings/sketches/tuscany_study_3.jpg"
+    "imagePath": "/paintings/sketches/tuscany_study_3.jpg",
+    "field": "#C7A767",
+    "ratio": 2.0963
   },
   {
     "slug": "tuscany-study-4",
@@ -36,13 +44,17 @@
     "region": "Tuscany Study",
     "medium": "watercolor, gouache, and pencil",
     "order": 4,
-    "imagePath": "/paintings/sketches/tuscany_study_4.jpg"
+    "imagePath": "/paintings/sketches/tuscany_study_4.jpg",
+    "field": "#393E52",
+    "ratio": 1.0391
   },
   {
     "slug": "not-lake-house",
     "title": "Not Lake House",
     "medium": "watercolor",
     "order": 5,
-    "imagePath": "/paintings/sketches/not_lake_house.jpg"
+    "imagePath": "/paintings/sketches/not_lake_house.jpg",
+    "field": "#91ACC7",
+    "ratio": 1.9566
   }
 ]

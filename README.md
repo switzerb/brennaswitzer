@@ -18,20 +18,28 @@ built around that idea.
 - **The chrome is drawn.** Title block, register marks, hairline rules, a
   twelve-column guide — the Houses series is graphite, so the structure of
   the site is line and the paintings supply all of the colour.
-- **The palette is sampled, not invented.** `scripts/extract-fields.py`
-  reads every painting and records one signature colour and its true
-  proportions into `app/lib/paintingFields.ts`. Dominant-colour extraction is
-  useless on photographs of paint on paper — everything comes back paper —
-  so it filters out anything too pale or too dark to read as a field and
-  ranks the rest by area weighted toward saturation, then pulls chroma and
-  value into the band the rest of the design lives in.
+- **The palette is sampled, not invented.** `scripts/sample-paintings.py`
+  reads every painting and writes one signature colour and its true
+  proportions into the manifests, from where `pnpm seed:paintings` loads them
+  into the `field` and `ratio` columns. Dominant-colour extraction is useless
+  on photographs of paint on paper — everything comes back paper — so it
+  filters out anything too pale or too dark to read as a field and ranks the
+  rest by area weighted toward saturation, then pulls chroma and value into
+  the band the rest of the design lives in. Because the values live in
+  content, a bad sample can be corrected by hand and will survive a reseed.
+- **The colour maths is one module.** `app/lib/color.ts` owns contrast,
+  the readability walk that keeps a pale sampled tint legible, and the hue
+  sort. `app/lib/rows.ts` owns the justified-row packing behind the
+  galleries. Both are pure and both are tested — `pnpm test`, no test
+  runner to install.
 - **Type**: Archivo (width axis, set expanded) for headings, Newsreader for
   prose, JetBrains Mono for every label, date and caption.
 
-Rerun the sampler after adding paintings:
+Rerun the sampler after adding paintings, then reseed:
 
 ```bash
-python3 scripts/extract-fields.py
+python3 scripts/sample-paintings.py   # --force to resample existing entries
+pnpm seed:paintings
 ```
 
 ## Stack
@@ -71,7 +79,8 @@ hand.
   request time from `filePath`; the DB only stores metadata used for listing
   and lookup.
 - **Paintings** — `content/paintings/<collection>.json` manifests (one file
-  per collection: sketches, houses, abstract-landscape, still-life).
+  per collection: sketches, houses, abstract-landscape, still-life). The
+  `field` and `ratio` keys are written by the sampler rather than by hand.
   `prisma/seed-paintings.ts` upserts one `Painting` row per manifest entry.
   Images live in `public/`.
 
@@ -84,7 +93,7 @@ app/
   writing/                 Post listing + [slug] MDX rendering
   painting/                Gallery listing + [collection] view
   lib/                     Prisma client, MDX helpers, collection config,
-                           generated painting colour/ratio metadata
+                           colour maths and gallery row packing (+ tests)
   components/              Sheet chrome (TitleBlock, FootRule, Scrubber,
                            Gridlines) and content components (Plate, PostList)
   generated/prisma/        Generated Prisma client (gitignored)
@@ -98,7 +107,7 @@ prisma/
   seed-paintings.ts        Seeds Painting from content/paintings
 scripts/
   scrape-houses.ts         One-off scraper used to source painting data
-  extract-fields.py        Samples block-in colour + aspect ratio per painting
+  sample-paintings.py      Samples block-in colour + aspect ratio per painting
 ```
 
 ## Scripts
@@ -111,7 +120,8 @@ scripts/
 | `pnpm lint` | ESLint |
 | `pnpm seed` | Reseed `Post` rows from `content/posts` |
 | `pnpm seed:paintings` | Reseed `Painting` rows from `content/paintings` |
-| `python3 scripts/extract-fields.py` | Resample block-in colours and aspect ratios from the painting files |
+| `pnpm test` | Unit tests for the colour and layout helpers (Node's built-in runner) |
+| `python3 scripts/sample-paintings.py` | Sample block-in colours and aspect ratios into the painting manifests |
 
 ## Database
 

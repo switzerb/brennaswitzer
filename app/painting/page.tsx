@@ -44,6 +44,8 @@ export default async function PaintingPage() {
                 imagePath={cover.imagePath}
                 title={collection.title}
                 meta={`${count} ${count === 1 ? "work" : "works"}`}
+                field={cover.field}
+                ratio={cover.ratio}
                 href={`/painting/${collection.slug}`}
                 aspect="4 / 3"
                 sizes="(max-width: 768px) 100vw, 33vw"

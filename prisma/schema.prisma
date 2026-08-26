@@ -34,6 +34,8 @@ model Painting {
   medium      String?
   dimensions  String?
   region      String?  // Gallery section grouping, e.g. "Portland" (houses) or "Tuscany" (a series within a collection)
+  field       String?  // Signature colour sampled from the image, e.g. "#A46657"
+  ratio       Float?   // width / height of the work, so plates are framed to it
   description String?
   order       Int      @default(0) // For manual ordering within collections
   createdAt   DateTime @default(now())

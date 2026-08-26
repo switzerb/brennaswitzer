@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
 import { PAINTING_COLLECTIONS } from "@/app/lib/paintingCollections";
 import { PaintingSubnav } from "@/app/components/PaintingSubnav";
-import { fieldFor } from "@/app/lib/paintingFields";
 
 export async function generateStaticParams() {
   const paintings = await prisma.painting.findMany({
@@ -82,7 +81,7 @@ export default async function PaintingDetailPage({
           <div
             className="solo-frame"
             style={
-              { "--field": fieldFor(painting.imagePath) } as React.CSSProperties
+              { "--field": painting.field ?? "#55647D" } as React.CSSProperties
             }
           >
             <Image

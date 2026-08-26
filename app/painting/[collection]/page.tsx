@@ -65,6 +65,8 @@ export default async function CollectionPage({
                 imagePath={painting.imagePath}
                 title={painting.title}
                 meta={painting.medium ?? undefined}
+                field={painting.field}
+                ratio={painting.ratio}
                 href={`/painting/${collection}/${painting.slug}`}
                 uncropped
                 priority={i < 6}

@@ -20,6 +20,9 @@ interface PaintingManifestEntry {
   description?: string | null;
   order: number;
   imagePath: string;
+  /** Both are written by scripts/sample-paintings.py, not by hand. */
+  field?: string | null;
+  ratio?: number | null;
 }
 
 async function main() {
@@ -38,6 +41,8 @@ async function main() {
         collection,
         imagePath: entry.imagePath,
         region: entry.region ?? null,
+        field: entry.field ?? null,
+        ratio: entry.ratio ?? null,
         medium: entry.medium ?? null,
         dimensions: entry.dimensions ?? null,
         date: entry.date ? new Date(entry.date) : null,
