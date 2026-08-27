@@ -5,7 +5,9 @@
     "region": "Gabriel",
     "medium": "acrylic on paper",
     "order": 0,
-    "imagePath": "/paintings/abstract-landscape/gabriel_one.jpg"
+    "imagePath": "/paintings/abstract-landscape/gabriel_one.jpg",
+    "field": "#998F6C",
+    "ratio": 1.0306
   },
   {
     "slug": "gabriel-two",
@@ -13,7 +15,9 @@
     "region": "Gabriel",
     "medium": "acrylic on paper",
     "order": 1,
-    "imagePath": "/paintings/abstract-landscape/gabriel_two.jpg"
+    "imagePath": "/paintings/abstract-landscape/gabriel_two.jpg",
+    "field": "#988958",
+    "ratio": 0.9939
   },
   {
     "slug": "tuscany-one",
@@ -21,7 +25,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 2,
-    "imagePath": "/paintings/abstract-landscape/tuscany_one.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_one.jpg",
+    "field": "#9E985F",
+    "ratio": 0.7497
   },
   {
     "slug": "tuscany-two",
@@ -29,7 +35,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 3,
-    "imagePath": "/paintings/abstract-landscape/tuscany_two.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_two.jpg",
+    "field": "#B8A06A",
+    "ratio": 0.7497
   },
   {
     "slug": "tuscany-three",
@@ -37,7 +45,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 4,
-    "imagePath": "/paintings/abstract-landscape/tuscany_three.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_three.jpg",
+    "field": "#A68056",
+    "ratio": 0.7497
   },
   {
     "slug": "tuscany-four",
@@ -45,7 +55,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 5,
-    "imagePath": "/paintings/abstract-landscape/tuscany_four.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_four.jpg",
+    "field": "#A46657",
+    "ratio": 0.998
   },
   {
     "slug": "tuscany-five",
@@ -53,7 +65,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 6,
-    "imagePath": "/paintings/abstract-landscape/tuscany_five.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_five.jpg",
+    "field": "#976B4F",
+    "ratio": 0.9777
   },
   {
     "slug": "tuscany-six",
@@ -61,7 +75,9 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 7,
-    "imagePath": "/paintings/abstract-landscape/tuscany_six.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_six.jpg",
+    "field": "#90874B",
+    "ratio": 0.9715
   },
   {
     "slug": "tuscany-seven",
@@ -69,6 +85,8 @@
     "region": "Tuscany",
     "medium": "acrylic on paper",
     "order": 8,
-    "imagePath": "/paintings/abstract-landscape/tuscany_seven.jpg"
+    "imagePath": "/paintings/abstract-landscape/tuscany_seven.jpg",
+    "field": "#364352",
+    "ratio": 1.0004
   }
 ]

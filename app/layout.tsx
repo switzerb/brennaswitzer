@@ -1,43 +1,75 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+import { Archivo, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "./components/Header";
-import { ConditionalFooter } from "./components/ConditionalFooter";
+import { TitleBlock } from "./components/TitleBlock";
+import { FootRule } from "./components/FootRule";
+import { Gridlines } from "./components/Gridlines";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* Archivo carries the width axis — the headings are set expanded, which is
+   where the drafting-sheet voice comes from. */
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  axes: ["opsz"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Brenna Switzer",
-  description: "Painter, Engineer, Writer",
+  metadataBase: new URL("https://brennaswitzer.com"),
+  title: {
+    default: "Brenna Switzer — Staff Software Engineer",
+    template: "%s — Brenna Switzer",
+  },
+  description:
+    "Staff software engineer and painter in Portland, Oregon. Writing on software and systems, and a gallery of paintings and drawings.",
+  openGraph: {
+    title: "Brenna Switzer — Staff Software Engineer",
+    description:
+      "Staff software engineer and painter in Portland, Oregon. Everything good starts out rough.",
+    type: "website",
+  },
 };
+
+/* Set the block-in before first paint so the page never flashes its
+   resolved state and then jump back. Reduced motion skips it entirely. */
+const NO_FLASH = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches){var d=document.documentElement;d.style.setProperty("--r","0");d.setAttribute("data-block-in","")}}catch(e){}`;
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${archivo.variable} ${newsreader.variable} ${jetbrains.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Header />
-        <div className="flex-1">{children}</div>
-        <ConditionalFooter />
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH }} />
+      </head>
+      <body>
+        <div className="sheet">
+          <div className="sheet-inner">
+            <TitleBlock />
+            <div className="stage">
+              <Gridlines />
+              {children}
+            </div>
+            <FootRule />
+          </div>
+        </div>
       </body>
     </html>
   );

@@ -1,12 +1,25 @@
-import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
-import { PAINTING_COLLECTIONS, collectionTitle } from "@/app/lib/paintingCollections";
+import {
+  PAINTING_COLLECTIONS,
+  paintingCollection,
+} from "@/app/lib/paintingCollections";
 import { PaintingSubnav } from "@/app/components/PaintingSubnav";
+import { Run } from "@/app/components/Run";
 
 export async function generateStaticParams() {
   return PAINTING_COLLECTIONS.map((c) => ({ collection: c.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ collection: string }>;
+}): Promise<Metadata> {
+  const { collection } = await params;
+  const config = paintingCollection(collection);
+  return { title: config?.title ?? "Plates", description: config?.blurb };
 }
 
 export default async function CollectionPage({
@@ -15,54 +28,43 @@ export default async function CollectionPage({
   params: Promise<{ collection: string }>;
 }) {
   const { collection } = await params;
-  const title = collectionTitle(collection);
-  if (!title) notFound();
+  const config = paintingCollection(collection);
+  if (!config) notFound();
 
   const paintings = await prisma.painting.findMany({
     where: { collection },
-    orderBy: { order: "desc" },
+    orderBy: { order: "asc" },
   });
 
   return (
-    <div className="min-h-screen py-16">
-      <main className="max-w-6xl mx-auto px-8">
-        <h1 className="text-4xl font-light mb-4">{title}</h1>
-        {collection === "houses" && paintings.length > 0 && (
-          <p className="text-zinc-600 dark:text-zinc-400 mb-6">
-            A painting of every place I&apos;ve lived.
-          </p>
-        )}
+    <div className="sheet-pad">
+      <div className="measure">
+        <header className="sheet-head">
+          <h1>{config.title}</h1>
+          <p className="blurb">{config.blurb}</p>
+        </header>
+
         <PaintingSubnav active={collection} />
 
         {paintings.length === 0 ? (
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <p className="mono" style={{ color: "var(--soft)" }}>
             Gallery coming soon
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {paintings.map((painting) => (
-              <Link
-                key={painting.slug}
-                href={`/painting/${collection}/${painting.slug}`}
-                className="group"
-              >
-                <div className="relative aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
-                  <Image
-                    src={painting.imagePath}
-                    alt={painting.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover group-hover:opacity-80 transition-opacity"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
-                  {painting.title}
-                </p>
-              </Link>
-            ))}
-          </div>
+          <Run
+            targetHeight={config.targetRowHeight}
+            items={paintings.map((painting) => ({
+              imagePath: painting.imagePath,
+              title: painting.title,
+              ratio: painting.ratio,
+              field: painting.field,
+              meta: painting.medium,
+              marker: painting.region,
+              href: `/painting/${collection}/${painting.slug}`,
+            }))}
+          />
         )}
-      </main>
+      </div>
     </div>
   );
 }

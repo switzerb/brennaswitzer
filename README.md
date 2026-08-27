@@ -1,6 +1,62 @@
 # brennaswitzer.com
 
-Personal site — writing, a painting gallery, and a CV/about page. Nice and boring for now.
+Personal site — writing, a painting gallery, and a CV/about page.
+
+## Design: Block-In
+
+A block-in is a painter's first pass: flat shapes, no detail, just structure
+and value. An engineer's version is a spike, or a first draft. The site is
+built around that idea.
+
+- **`--r`** ("resolve") runs `0` → `1` on `<html>` and is the only piece of
+  state the design has. At `0` the page is its block-in — flat fields of
+  paint where the content goes, with the column grid showing. At `1` it is
+  the finished sheet. `Scrubber.tsx` sets it (imperatively, on every
+  animation frame, so it never re-renders); everything else reads it in CSS
+  via `.bi`, `.hl` and `.plate-img::after`. The page paints itself in once on
+  load, and `prefers-reduced-motion` skips straight to `1`.
+- **The chrome is drawn.** Title block, register marks, hairline rules, a
+  twelve-column guide — the Houses series is graphite, so the structure of
+  the site is line and the paintings supply all of the colour.
+- **The palette is sampled, not invented.** `scripts/sample-paintings.py`
+  reads every painting and writes one signature colour and its true
+  proportions into the manifests, from where `pnpm seed:paintings` loads them
+  into the `field` and `ratio` columns. Dominant-colour extraction is useless
+  on photographs of paint on paper — everything comes back paper — so it
+  filters out anything too pale or too dark to read as a field and ranks the
+  rest by area weighted toward saturation, then pulls chroma and value into
+  the band the rest of the design lives in. Because the values live in
+  content, a bad sample can be corrected by hand and will survive a reseed.
+- **The colour maths is one module.** `app/lib/color.ts` owns contrast,
+  the readability walk that keeps a pale sampled tint legible, and the hue
+  sort. `app/lib/rows.ts` owns the justified-row packing behind the
+  galleries. Both are pure and both are tested — `pnpm test`, no test
+  runner to install.
+- **Type**: Archivo (width axis, set expanded) for headings, Newsreader for
+  prose, JetBrains Mono for every label, date and caption.
+- **Empty fields show as gaps, not guesses.** A plate page renders an em dash
+  for anything the manifest has not filled, and only draws its dimension line
+  when there is a measurement to draw. Fill `dimensions` on a painting and
+  the annotation appears.
+- **Writing carries a revision block.** A drawing sheet lists which revision,
+  when and what changed; an essay page does the same, filled from `git log`
+  for that file. It is read at **seed** time on purpose — the deploy build is
+  a shallow clone and a serverless runtime has no git binary, so the only
+  place the full history exists is a local checkout. It reaches production
+  inside `dev.db` like the rest of the content. No git, no revision block, no
+  failed seed.
+- **Painting descriptions are markdown**, compiled by the same renderer as
+  the essays (`renderMarkdown` in `app/lib/mdx.ts`). That makes them MDX in
+  practice, so a literal `<` or `{` in prose needs escaping; because the
+  pages are prerendered, a bad one fails the build rather than rendering
+  wrong.
+
+Rerun the sampler after adding paintings, then reseed:
+
+```bash
+python3 scripts/sample-paintings.py   # --force to resample existing entries
+pnpm seed:paintings
+```
 
 ## Stack
 
@@ -34,12 +90,15 @@ it — regenerate it any time with the seed scripts rather than editing rows by
 hand.
 
 - **Writing** — `content/posts/*.mdx` (frontmatter: `title`, `date`,
-  `description`). `prisma/seed.ts` upserts one `Post` row per file, keyed by a
+  `description`). Each post's `Revision` rows come from that file's git
+  history and are replaced wholesale on every seed, since a rebase can
+  rewrite hashes. `prisma/seed.ts` upserts one `Post` row per file, keyed by a
   slug derived from the filename. The MDX body is read and rendered at
   request time from `filePath`; the DB only stores metadata used for listing
   and lookup.
 - **Paintings** — `content/paintings/<collection>.json` manifests (one file
-  per collection: sketches, houses, abstract-landscape, still-life).
+  per collection: sketches, houses, abstract-landscape, still-life). The
+  `field` and `ratio` keys are written by the sampler rather than by hand.
   `prisma/seed-paintings.ts` upserts one `Painting` row per manifest entry.
   Images live in `public/`.
 
@@ -51,7 +110,10 @@ app/
   about/                   About / CV
   writing/                 Post listing + [slug] MDX rendering
   painting/                Gallery listing + [collection] view
-  lib/                     Prisma client, MDX helpers, collection/palette config
+  lib/                     Prisma client, MDX helpers, collection config,
+                           colour maths and gallery row packing (+ tests)
+  components/              Sheet chrome (TitleBlock, FootRule, Scrubber,
+                           Gridlines) and content components (Plate, PostList)
   generated/prisma/        Generated Prisma client (gitignored)
 content/
   posts/                   MDX blog posts
@@ -63,6 +125,7 @@ prisma/
   seed-paintings.ts        Seeds Painting from content/paintings
 scripts/
   scrape-houses.ts         One-off scraper used to source painting data
+  sample-paintings.py      Samples block-in colour + aspect ratio per painting
 ```
 
 ## Scripts
@@ -75,6 +138,8 @@ scripts/
 | `pnpm lint` | ESLint |
 | `pnpm seed` | Reseed `Post` rows from `content/posts` |
 | `pnpm seed:paintings` | Reseed `Painting` rows from `content/paintings` |
+| `pnpm test` | Unit tests for the colour and layout helpers (Node's built-in runner) |
+| `python3 scripts/sample-paintings.py` | Sample block-in colours and aspect ratios into the painting manifests |
 
 ## Database
 

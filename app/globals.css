@@ -1,85 +1,596 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #b5603e;
-}
+/* ==========================================================================
+   Block-In — the design system for brennaswitzer.com
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-fraunces);
+   Two bodies of work sit behind every choice here. The Houses series is
+   graphite: line, structure, measurement. The abstract landscapes are
+   colour. So the site's chrome is drawn — a drafting sheet with a title
+   block, register marks and hairline rules — and every warm colour on the
+   page is sampled from an actual painting rather than invented.
+
+   `--r` ("resolve") runs 0 → 1 and is set on <html> by ResolveRoot.
+   0 is the block-in: flat fields of paint where the content will go.
+   1 is the finished sheet. Everything that participates reads `--r`.
+   ========================================================================== */
+
+:root {
+  /* ground and ink — drawing paper, graphite. Deliberately not cream, and
+     carrying about half the warmth it started with: enough of a cast that
+     the ground reads as paper, not enough to tint the paintings on it. */
+  /* Both grounds are declared in both themes so the tint picker can read
+     them out of CSS and compute a legible ink for each, rather than keeping
+     a second copy of these hexes in TypeScript. */
+  --paper-light: #e5e4e0;
+  --paper-dark: #191919;
+
+  --paper: var(--paper-light);
+  --sunk: #dbdad5;
+  --graphite: #222220;
+  --soft: #5b5b57;
+  --rule: rgb(34 34 32 / 0.17);
+  --rule-strong: rgb(34 34 32 / 0.36);
+  --bar: rgb(34 34 32 / 0.22);
+
+  /* sampled from the paintings — see scripts/extract-fields.py */
+  --c-terra: #a46657;
+  --c-olive: #9e985f;
+  --c-sky: #6b80a7;
+  --c-deep: #3a3b26;
+  --c-rose: #c99580;
+  --c-sand: #ddc293;
+
+  /* The single UI accent: the slate blue out of Tuscany Four, taken down a
+     step so it clears AA on the sunk ground as well as on paper. The warm
+     colours belong to the paintings; the interface does not compete.
+     Picking a specimen off the index sets --tint-light / --tint-dark and
+     takes over from here. */
+  --accent: var(--tint-light, #485d7e);
+
+  --r: 1;
+  --gut: clamp(18px, 3.2vw, 44px);
+
+  /* The foot rule is pinned to the bottom of the window, so anything else
+     that pins there has to clear it. Both read this rather than guessing. */
+  --footrule-height: 2.75rem;
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --accent: #d98a63;
+    --paper: var(--paper-dark);
+    --sunk: #222221;
+    --graphite: #e7e6e2;
+    --soft: #94938f;
+    --rule: rgb(231 230 226 / 0.16);
+    --rule-strong: rgb(231 230 226 / 0.34);
+    --bar: rgb(231 230 226 / 0.2);
+    --accent: var(--tint-dark, #8fa5c9);
+
+    color-scheme: dark;
   }
 }
 
-@utility display-font {
-  font-family: var(--font-serif), serif;
+@theme inline {
+  --color-paper: var(--paper);
+  --color-sunk: var(--sunk);
+  --color-graphite: var(--graphite);
+  --color-soft: var(--soft);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+
+  --font-sans: var(--font-newsreader);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-jetbrains);
+}
+
+/* --------------------------------------------------------------- base --- */
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--graphite);
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-serif), serif;
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-h2 {
-  padding-top: 1.5rem;
-  font-size: 1.5rem;
+:where(a, button, input, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-p {
-  padding-top: 0.8rem;
+/* --------------------------------------------------------- the sheet --- */
+
+.sheet {
+  min-height: 100dvh;
+  padding: clamp(10px, 1.4vw, 20px);
+  display: flex;
+  flex-direction: column;
 }
 
-.home-nav-col {
-  flex: 1 1 0%;
+.sheet-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule-strong);
+  position: relative;
+  background: var(--paper);
+}
+
+/* register marks, as on a plate proof */
+.sheet-inner::before,
+.sheet-inner::after {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+  border: 1px solid var(--rule-strong);
+}
+
+.sheet-inner::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+  transform: translate(-5px, -5px);
+}
+
+.sheet-inner::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: 0;
+  border-top: 0;
+  transform: translate(5px, 5px);
+}
+
+.stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-pad {
+  padding: clamp(26px, 4.2vw, 60px) var(--gut);
+  flex: 1;
+}
+
+.measure {
+  max-width: 1500px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* -------------------------------------------------------- mono utility --- */
+
+.mono {
+  font-family: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------- title block --- */
+
+.titleblock {
+  display: flex;
+  align-items: stretch;
+  /* The site's one band of tint, present on every page. Picking a specimen
+     has to be visible from where you pick it, or the control is a rumour. */
+  border-bottom: 2px solid var(--accent);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--paper);
+}
+
+.tb-cell {
+  padding: 0.72rem var(--gut);
+  border-right: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  color: var(--soft);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.tb-name {
+  color: var(--graphite);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  transition: color 0.2s ease;
+}
+
+a.tb-name:hover {
+  color: var(--accent);
+}
+
+.tb-nav {
+  margin-left: auto;
+  display: flex;
+  padding: 0;
+  border-right: 0;
+}
+
+.tb-nav a {
+  border-left: 1px solid var(--rule);
+  padding: 0.72rem clamp(12px, 1.6vw, 22px);
+  color: var(--soft);
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  align-items: center;
   transition:
-    flex-grow 500ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 300ms ease;
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
-.home-nav-col:hover {
-  flex-grow: 1.6;
-  filter: brightness(1.08);
+.tb-nav a:hover {
+  color: var(--graphite);
+  background: var(--sunk);
 }
 
-.intro-body-grid {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 400ms cubic-bezier(0.22, 1, 0.36, 1);
+.tb-nav a[aria-current="page"] {
+  color: var(--graphite);
 }
 
-.group:hover .intro-body-grid {
-  grid-template-rows: 1fr;
+.tb-nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
 }
 
-.intro-body-grid > div {
+/* ---------------------------------------------------------- foot rule --- */
+
+.footrule {
+  display: flex;
+  min-height: var(--footrule-height);
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--rule-strong);
+  padding: 0.62rem var(--gut);
+  color: var(--soft);
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background: var(--paper);
+}
+
+.footrule a {
+  color: var(--soft);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.footrule a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.scrub {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-left: auto;
+}
+
+.scrub span {
+  color: var(--soft);
+  transition: color 0.2s ease;
+}
+
+.scrub span.on {
+  color: var(--graphite);
+}
+
+.scrub input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: clamp(96px, 14vw, 190px);
+  height: 20px;
+  background: none;
+  cursor: ew-resize;
+  margin: 0;
+}
+
+.scrub input::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--rule-strong);
+}
+
+.scrub input::-moz-range-track {
+  height: 3px;
+  background: var(--rule-strong);
+}
+
+.scrub input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 17px;
+  background: var(--accent);
+  border: 0;
+  border-radius: 1px;
+  margin-top: -7px;
+}
+
+.scrub input::-moz-range-thumb {
+  width: 11px;
+  height: 17px;
+  background: var(--accent);
+  border: 0;
+  border-radius: 1px;
+}
+
+/* ------------------------------------------------- block-in machinery --- */
+
+/* What is left of the block-in after the hero it was built for: every plate
+   dissolves into the flat field of its own sampled colour, and the column
+   grid surfaces underneath. Dragging a gallery wall back to paint is a
+   better demonstration of the idea than the headline ever was. */
+
+/* the twelve column guides, drawn only while the page is unresolved */
+.gridlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  padding-inline: var(--gut);
+  opacity: calc((1 - var(--r)) * 0.42);
+}
+
+.gridlines i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+}
+
+.display {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 125;
+  font-stretch: 125%;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.012em;
+  line-height: 0.98;
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- plates --- */
+
+.plate {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.plate-img {
+  position: relative;
   overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  background: var(--sunk);
+  aspect-ratio: var(--ar, 4 / 3);
 }
 
-/* Post body content (compiled MDX). No Tailwind Typography plugin is
-   installed, so this replaces browser-default block spacing with a
-   deliberate, tighter rhythm instead of the generic "prose" scale. */
+.plate-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* the colour field IS the underpainting of the photograph beneath it */
+.plate-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--field, var(--c-terra));
+  opacity: calc(1 - var(--r));
+  pointer-events: none;
+}
+
+a.plate:hover .plate-img img,
+.plate a:hover .plate-img img {
+  transform: scale(1.03);
+}
+
+.plate figcaption,
+.plate .caption {
+  color: var(--soft);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.plate b {
+  color: var(--graphite);
+  font-weight: 500;
+  letter-spacing: 0.13em;
+}
+
+/* artwork on a gallery sheet is never cropped */
+.plate.uncropped .plate-img img {
+  object-fit: contain;
+}
+
+/* ------------------------------------------------------ sheet heading --- */
+
+.sheet-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1rem;
+  margin-bottom: clamp(28px, 4vw, 52px);
+}
+
+.sheet-head h1 {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-stretch: 112%;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1;
+  margin: 0;
+}
+
+.sheet-head .blurb {
+  margin: 0;
+  color: var(--soft);
+  max-width: 46ch;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------- sub-nav --- */
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.6rem;
+  margin-bottom: clamp(22px, 3vw, 38px);
+}
+
+.subnav a {
+  color: var(--soft);
+  text-decoration: none;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.subnav a:hover {
+  color: var(--graphite);
+}
+
+.subnav a[aria-current="page"] {
+  color: var(--graphite);
+  border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------- index --- */
+
+.index {
+  border-top: 1px solid var(--rule);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 9ch minmax(0, 1fr) auto;
+  gap: 0 clamp(14px, 2vw, 32px);
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    background 0.18s ease,
+    padding 0.18s ease;
+}
+
+.entry:hover {
+  background: var(--sunk);
+  padding-inline: 0.7rem;
+}
+
+.entry time {
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.entry h2 {
+  margin: 0;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.08rem, 1.6vw, 1.34rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.entry .excerpt {
+  margin: 0.24rem 0 0;
+  color: var(--soft);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 62ch;
+}
+
+.entry .tag {
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.entry.featured {
+  background: var(--sunk);
+  padding-inline: 1rem;
+  border-bottom-color: var(--rule-strong);
+}
+
+.entry.featured h2 {
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+}
+
+/* --------------------------------------------------------- pager rule --- */
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: clamp(48px, 7vw, 88px);
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--rule);
+}
+
+.pager a {
+  color: var(--soft);
+  text-decoration: none;
+  max-width: 30ch;
+  transition: color 0.18s ease;
+}
+
+.pager a:hover {
+  color: var(--accent);
+}
+
+.pager a:last-child {
+  text-align: right;
+}
+
+/* ------------------------------------------------------- post content --- */
+
 .post-content {
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: 1.075rem;
+  line-height: 1.68;
+  color: var(--graphite);
 }
 
 .post-content > :first-child {
@@ -87,23 +598,31 @@ p {
 }
 
 .post-content p {
-  padding-top: 0;
   margin-top: 1em;
 }
 
-.post-content h2 {
-  padding-top: 0;
-  margin-top: 2em;
-  margin-bottom: 0.5em;
-  font-size: 1.375rem;
+.post-content h2,
+.post-content h3 {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 106;
+  font-stretch: 106%;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
   text-wrap: balance;
 }
 
+.post-content h2 {
+  margin-top: 2.2em;
+  margin-bottom: 0.5em;
+  font-size: 1.15rem;
+}
+
 .post-content h3 {
-  margin-top: 1.5em;
+  margin-top: 1.7em;
   margin-bottom: 0.4em;
-  font-size: 1.125rem;
-  text-wrap: balance;
+  font-size: 0.95rem;
+  color: var(--soft);
 }
 
 .post-content ul,
@@ -125,32 +644,31 @@ p {
 }
 
 .post-content blockquote {
-  margin-top: 1em;
-  padding-left: 1rem;
+  margin: 1.4em 0;
+  padding-left: 1.1rem;
   border-left: 2px solid var(--accent);
   font-style: italic;
-  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  color: var(--soft);
 }
 
 .post-content pre {
-  margin-top: 1em;
-  padding: 0.9rem 1.1rem;
-  border-radius: 0.375rem;
+  margin-top: 1.2em;
+  padding: 1rem 1.15rem;
   overflow-x: auto;
   font-size: 0.85em;
-  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  background: var(--sunk);
+  border: 1px solid var(--rule);
 }
 
 .post-content :not(pre) > code {
-  font-family: var(--font-mono), monospace;
-  font-size: 0.875em;
-  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.86em;
+  background: var(--sunk);
   padding: 0.15em 0.35em;
-  border-radius: 0.25rem;
 }
 
 .post-content pre code {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 .post-content a {
@@ -160,12 +678,918 @@ p {
 }
 
 .post-content img {
-  margin-top: 1em;
-  border-radius: 0.375rem;
+  margin-top: 1.2em;
+  border: 1px solid var(--rule-strong);
+  max-width: 100%;
+  height: auto;
 }
 
 .post-content hr {
-  margin: 1.75em 0;
+  margin: 2em 0;
   border: none;
-  border-top: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+  border-top: 1px solid var(--rule);
+}
+
+/* ------------------------------------------------------------ motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ----------------------------------------------------------------- cv --- */
+
+.cv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(34px, 5vw, 84px);
+  align-items: start;
+}
+
+.cv-prose p {
+  font-size: 1.06rem;
+  line-height: 1.66;
+  color: var(--soft);
+  margin: 0 0 1.05em;
+}
+
+.cv-prose p:first-child {
+  font-size: 1.2rem;
+  color: var(--graphite);
+}
+
+.cv-prose em {
+  font-style: italic;
+}
+
+.ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.job {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 1.2rem;
+  align-items: baseline;
+}
+
+.job h3 {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 106;
+  font-stretch: 106%;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+.job .where {
+  grid-column: 2;
+  color: var(--soft);
+  text-align: right;
+}
+
+.job .formerly {
+  grid-column: 1 / -1;
+  color: var(--soft);
+  font-style: italic;
+  font-size: 0.9rem;
+  margin: 0.1rem 0 0;
+}
+
+.job ul {
+  grid-column: 1 / -1;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.job li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--soft);
+  font-size: 0.95rem;
+}
+
+.job li span:first-child {
+  color: var(--graphite);
+}
+
+.job li span:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
+/* the run of time at one place, under the roles it covers */
+.job li.total span:last-child {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------- plate grid --- */
+
+/* --------------------------------------------------------- collection --- */
+
+.collection-grid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: clamp(20px, 2.6vw, 38px);
+}
+
+/* ------------------------------------------------------------ article --- */
+
+.article {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+.article-head {
+  margin-bottom: clamp(28px, 4vw, 46px);
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.article-head time {
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.article-head h1 {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-stretch: 112%;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  line-height: 1.02;
+  margin: 0.5rem 0 0;
+  text-wrap: balance;
+}
+
+/* -------------------------------------------------------- responsive --- */
+
+@media (max-width: 1000px) {
+  .cv {
+    grid-template-columns: 1fr;
+  }
+
+  .gridlines {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .entry {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .entry .tag {
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .scrub {
+    margin-left: 0;
+  }
+}
+
+/* The scrubber's labels track `--r` through an attribute rather than React
+   state, so dragging never triggers a re-render. */
+.scrub .lbl-block {
+  color: var(--soft);
+}
+
+.scrub .lbl-final {
+  color: var(--graphite);
+}
+
+:root[data-block-in] .scrub .lbl-block {
+  color: var(--graphite);
+}
+
+:root[data-block-in] .scrub .lbl-final {
+  color: var(--soft);
+}
+
+/* ------------------------------------------------------------ the run --- */
+
+/* Plates hang in justified rows: every plate in a row shares one height and
+   its width follows the work's own proportions, so nothing is cropped. Row
+   membership is decided in app/lib/rows.ts; the widths below are pure CSS,
+   which is why there is nothing to recompute when the window changes. */
+
+.run {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.8vw, 36px);
+}
+
+.run-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.run-plate {
+  flex: var(--grow) 1 0;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* A trailing row too short to fill the width is pinned to its natural size
+   and left-aligned, rather than stretching one plate across the page. */
+.run-plate[data-pinned] {
+  flex: 0 0 auto;
+  width: var(--w);
+}
+
+.run-label,
+.run-meta {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.run-label {
+  font-size: 0.5rem;
+  color: var(--graphite);
+}
+
+.run-meta {
+  font-size: 0.47rem;
+  color: var(--soft);
+  margin: 0;
+}
+
+.run-rule {
+  height: 1px;
+  background: var(--rule-strong);
+  margin-top: 9px;
+}
+
+.run-marker {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 9px;
+  font-size: 0.5rem;
+}
+
+.run-range {
+  color: var(--accent);
+}
+
+.run-count {
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rows are assigned at desktop proportions; below that a row of eight is
+   unreadable, so the run falls back to a plain pair of columns and each
+   plate keeps its own aspect ratio. */
+@media (max-width: 700px) {
+  .run-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .run-plate,
+  .run-plate[data-pinned] {
+    flex: none;
+    width: auto;
+  }
+}
+
+/* ------------------------------------------------------- a single plate --- */
+
+/* The plate page borrows the grammar of a drawing sheet: a title block
+   across the top, the work dimensioned, and the record as a table. It is
+   the one place in the site where architectural annotation is native rather
+   than decorative — these really are elevation drawings of buildings. */
+
+.drawing-titleblock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border: 1px solid var(--rule-strong);
+  color: var(--soft);
+  font-size: 0.55rem;
+  margin-bottom: clamp(26px, 3.4vw, 40px);
+}
+
+.drawing-titleblock > * {
+  padding: 0.6rem 1rem;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+}
+
+.drawing-titleblock > :last-child {
+  border-right: 0;
+}
+
+.drawing-titleblock .tb-who {
+  color: var(--graphite);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.drawing-titleblock .tb-code {
+  color: var(--accent);
+}
+
+.drawing-titleblock .tb-subject {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(30px, 4vw, 64px);
+  align-items: start;
+}
+
+.sheet-figure {
+  margin: 0;
+}
+
+.sheet-figure .plate-img {
+  aspect-ratio: var(--ar);
+}
+
+/* Drawn only when there is a measurement to draw — see the page. */
+.dimension {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  height: 30px;
+  margin-top: 0.5rem;
+  color: var(--accent);
+  font-size: 0.55rem;
+}
+
+.dimension-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule-strong);
+  position: relative;
+}
+
+/* extension lines, with the slash ticks a dimension line is drawn with */
+.dimension-rule::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 1px;
+  height: 15px;
+  background: var(--rule-strong);
+}
+
+.dimension-rule:first-child::before {
+  left: 0;
+}
+
+.dimension-rule:last-child::before {
+  right: 0;
+}
+
+.dimension-rule::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 12px;
+  height: 1px;
+  background: var(--graphite);
+  transform: rotate(-45deg);
+}
+
+.dimension-rule:first-child::after {
+  left: -5px;
+}
+
+.dimension-rule:last-child::after {
+  right: -5px;
+}
+
+.sheet-margin {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.6vw, 30px);
+}
+
+.sheet-margin h1 {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 118;
+  font-stretch: 118%;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.008em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.plate-note {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--soft);
+}
+
+.plate-note-empty {
+  margin: 0;
+  color: var(--soft);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.margin-head {
+  margin: 0 0 0.7rem;
+  font-size: 0.53rem;
+  color: var(--soft);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule-strong);
+  font-weight: 500;
+}
+
+.specimen {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.specimen-chip {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.specimen-facts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.55rem;
+  color: var(--soft);
+}
+
+.specimen-code {
+  color: var(--graphite);
+}
+
+.record {
+  margin: 0;
+  font-size: 0.55rem;
+}
+
+.record > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.record > div:last-child {
+  border-bottom: 0;
+}
+
+.record dt {
+  color: var(--soft);
+}
+
+.record dd {
+  margin: 0;
+  text-align: right;
+}
+
+/* A field that exists and has not been filled in. Not a guess, and not a
+   gap you have to wonder about. */
+.unrecorded {
+  color: var(--soft);
+  opacity: 0.65;
+}
+
+/* Inline run of small facts, as under a page heading. */
+.inline-facts {
+  display: flex;
+  gap: 0.6rem 1.4rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .sheet-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------- book index --- */
+
+/* The front page sets like the back of a book: sections with dotted leaders
+   and counts, every painting a numbered specimen carrying the colour taken
+   off it. The bar along the bottom is that palette grouped one family per
+   collection — the families are a result of what the work is made of, not a
+   decision anyone made. */
+
+.index-page {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(26px, 3vw, 38px);
+  min-height: calc(100dvh - 13rem);
+}
+
+.index-display {
+  font-size: clamp(2.1rem, 5.4vw, 4.2rem);
+}
+
+.index-lede {
+  font-size: clamp(1rem, 1.2vw, 1.16rem);
+  line-height: 1.6;
+  color: var(--soft);
+  max-width: 58ch;
+  margin: 1rem 0 0;
+}
+
+.index-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.index-controls-label {
+  font-size: 0.53rem;
+  color: var(--soft);
+}
+
+.index-chips {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.index-chip {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--soft);
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.index-chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.book-index {
+  column-count: 2;
+  column-gap: clamp(32px, 4vw, 64px);
+}
+
+.book-section {
+  break-inside: avoid;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+}
+
+.book-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.book-section-title {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-stretch: 112%;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--graphite);
+}
+
+.book-section-count {
+  font-size: 0.53rem;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the dotted run between a heading and its count, as an index sets */
+.leader {
+  flex: 1 0 12px;
+  min-width: 12px;
+  border-bottom: 1px dotted var(--rule-strong);
+  transform: translateY(-3px);
+}
+
+.book-entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.book-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.16rem 0;
+}
+
+.entry-chip {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  align-self: center;
+}
+
+.entry-chip[aria-pressed="true"] {
+  outline: 1px solid var(--graphite);
+  outline-offset: 1px;
+}
+
+.entry-chip-empty {
+  background: var(--rule);
+  cursor: default;
+}
+
+.entry-code {
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.entry-title {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 0.86rem;
+  line-height: 1.25;
+  color: var(--graphite);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.entry-title:hover {
+  color: var(--accent);
+}
+
+.entry-detail {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  flex-shrink: 0;
+  max-width: 20ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------- specimen bar --- */
+
+/* Pinned above the foot rule so the palette is in reach from anywhere in
+   the index — it is the one control the page is built around, and scrolling
+   past 58 entries should not put it out of view. */
+.specimen-bar {
+  margin-top: auto;
+  position: sticky;
+  bottom: var(--footrule-height);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.85rem 0 0.9rem;
+  background: var(--paper);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.specimen-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: 0.58rem;
+  color: var(--soft);
+}
+
+.specimen-swatch {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  align-self: center;
+  border: 1px solid var(--rule-strong);
+}
+
+.specimen-readout .tinted {
+  color: var(--accent);
+}
+
+.specimen-readout .sep {
+  opacity: 0.5;
+}
+
+.specimen-hint {
+  margin-left: auto;
+}
+
+.families {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-end;
+}
+
+.family {
+  min-width: 0;
+  flex-basis: 0;
+}
+
+.family-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.5rem;
+  color: var(--soft);
+  margin-bottom: 0.45rem;
+}
+
+.family-chips {
+  display: flex;
+  height: 72px;
+  align-items: flex-end;
+}
+
+.family-chip {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  height: 76%;
+  transition: height 0.18s ease;
+}
+
+.family-chip[data-picked],
+.family-chip:hover {
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .book-index {
+    column-count: 1;
+  }
+
+  .index-page {
+    min-height: 0;
+  }
+
+  .specimen-hint {
+    display: none;
+  }
+
+  /* The foot rule wraps at this width, so its height is no longer a number
+     the bar can clear. Let it sit at the end of the page instead. */
+  .specimen-bar {
+    position: static;
+  }
+}
+
+/* ------------------------------------------------------------- essays --- */
+
+.sheet-cols-essay {
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+}
+
+.essay {
+  max-width: 68ch;
+}
+
+.essay-meta {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.58rem;
+  color: var(--soft);
+}
+
+.essay-meta a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.essay-title {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 118;
+  font-stretch: 118%;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: clamp(1.6rem, 3.1vw, 2.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  margin: 0.6rem 0 1.6rem;
+  text-wrap: balance;
+}
+
+/* the revision table a drawing sheet carries, filled from git */
+.margin-head-split {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.rev-flag {
+  width: 12px;
+  height: 11px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  flex-shrink: 0;
+}
+
+.drawing-titleblock .tb-rev {
+  gap: 0.5rem;
+  color: var(--graphite);
+}
+
+.revisions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.53rem;
+}
+
+.revisions li {
+  display: grid;
+  grid-template-columns: 1.6rem 4.6rem minmax(0, 1fr);
+  gap: 0.7rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+
+.revisions-head {
+  color: var(--soft);
+}
+
+.rev-label {
+  color: var(--accent);
+}
+
+.rev-date {
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the hash, set as written rather than shouted */
+.rev-commit {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--soft);
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.margin-note {
+  margin: 0.8rem 0 0;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--soft);
 }
