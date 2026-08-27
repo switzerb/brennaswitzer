@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
-import { PAINTING_COLLECTIONS } from "@/app/lib/paintingCollections";
+import {
+  OPENING_SPECIMEN,
+  PAINTING_COLLECTIONS,
+} from "@/app/lib/paintingCollections";
 import { POST_SERIES } from "@/app/lib/postSeries";
 import { EDUCATION, EXPERIENCE, span } from "@/app/lib/cv";
 import {
@@ -32,10 +35,14 @@ export default async function Home() {
 
   const sections: IndexSection[] = [];
   const families: Family[] = [];
+  let openingCode = "";
 
   for (const collection of PAINTING_COLLECTIONS) {
     const works = paintings.filter((p) => p.collection === collection.slug);
     if (works.length === 0) continue;
+
+    const opening = works.findIndex((w) => w.slug === OPENING_SPECIMEN);
+    if (opening !== -1) openingCode = code(collection.code, opening);
 
     sections.push({
       id: collection.slug,
@@ -105,7 +112,11 @@ export default async function Home() {
   });
 
   const total = sections.reduce((n, s) => n + s.entries.length, 0);
-  const opening = families.flatMap((f) => f.specimens)[0]?.code ?? "";
+  const specimens = families.flatMap((family) => family.specimens);
+  const opening =
+    specimens.find((s) => s.code === openingCode)?.code ??
+    specimens[0]?.code ??
+    "";
 
   return (
     <div className="sheet-pad">

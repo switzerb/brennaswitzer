@@ -42,6 +42,16 @@ export const PAINTING_COLLECTIONS: readonly PaintingCollection[] = [
   },
 ] as const;
 
+/**
+ * The painting the site opens wearing.
+ *
+ * Deliberately separate from hanging order: which work leads a collection
+ * and which colour the interface takes are different decisions, and tying
+ * them together would mean reordering a gallery to change an accent.
+ * Falls back to the first sampled work if this slug goes away.
+ */
+export const OPENING_SPECIMEN = "tuscany-seven";
+
 export function paintingCollection(
   slug: string,
 ): PaintingCollection | undefined {
