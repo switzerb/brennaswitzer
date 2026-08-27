@@ -1,6 +1,9 @@
 import { readdirSync, readFileSync } from "fs";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import path from "path";
 import matter from "gray-matter";
+import { revisionLabel } from "../app/lib/revisions";
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
@@ -10,6 +13,49 @@ const adapter = new PrismaBetterSqlite3({
 const prisma = new PrismaClient({ adapter });
 
 const postsDir = path.join(process.cwd(), "content/posts");
+const run = promisify(execFile);
+
+// Unit separator: commit subjects can contain anything else.
+const FIELD = "\u001f";
+
+interface Revision {
+  date: Date;
+  subject: string;
+  commit: string;
+}
+
+/**
+ * The commits that touched one file, oldest first.
+ *
+ * Read here rather than at build or request time on purpose: the deploy
+ * build is a shallow clone and a serverless runtime has no git binary, so
+ * the only place the full history exists is a local checkout. It travels to
+ * production inside dev.db like the rest of the content.
+ */
+async function gitHistory(filePath: string): Promise<Revision[]> {
+  try {
+    const { stdout } = await run("git", [
+      "log",
+      "--follow",
+      `--format=%h${FIELD}%aI${FIELD}%s`,
+      "--",
+      filePath,
+    ]);
+
+    return stdout
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        const [commit, iso, subject] = line.split(FIELD);
+        return { commit, date: new Date(iso), subject };
+      })
+      .reverse();
+  } catch {
+    // No git, no history, no revision block. Not a reason to fail a seed.
+    console.warn(`  no git history for ${filePath}`);
+    return [];
+  }
+}
 
 function slugify(name: string): string {
   return name
@@ -57,7 +103,24 @@ async function main() {
       create: { slug, ...fields },
     });
 
-    console.log(`Seeded post: ${slug}`);
+    // Replaced wholesale rather than merged: git is the source of truth and
+    // a rebase can rewrite hashes under us.
+    const history = await gitHistory(fields.filePath);
+    await prisma.revision.deleteMany({ where: { postSlug: slug } });
+    if (history.length > 0) {
+      await prisma.revision.createMany({
+        data: history.map((revision, index) => ({
+          postSlug: slug,
+          label: revisionLabel(index),
+          date: revision.date,
+          subject: revision.subject,
+          commit: revision.commit,
+          order: index,
+        })),
+      });
+    }
+
+    console.log(`Seeded post: ${slug} (${history.length} revisions)`);
   }
 }
 

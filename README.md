@@ -38,6 +38,13 @@ built around that idea.
   for anything the manifest has not filled, and only draws its dimension line
   when there is a measurement to draw. Fill `dimensions` on a painting and
   the annotation appears.
+- **Writing carries a revision block.** A drawing sheet lists which revision,
+  when and what changed; an essay page does the same, filled from `git log`
+  for that file. It is read at **seed** time on purpose — the deploy build is
+  a shallow clone and a serverless runtime has no git binary, so the only
+  place the full history exists is a local checkout. It reaches production
+  inside `dev.db` like the rest of the content. No git, no revision block, no
+  failed seed.
 - **Painting descriptions are markdown**, compiled by the same renderer as
   the essays (`renderMarkdown` in `app/lib/mdx.ts`). That makes them MDX in
   practice, so a literal `<` or `{` in prose needs escaping; because the
@@ -83,7 +90,9 @@ it — regenerate it any time with the seed scripts rather than editing rows by
 hand.
 
 - **Writing** — `content/posts/*.mdx` (frontmatter: `title`, `date`,
-  `description`). `prisma/seed.ts` upserts one `Post` row per file, keyed by a
+  `description`). Each post's `Revision` rows come from that file's git
+  history and are replaced wholesale on every seed, since a rebase can
+  rewrite hashes. `prisma/seed.ts` upserts one `Post` row per file, keyed by a
   slug derived from the filename. The MDX body is read and rendered at
   request time from `filePath`; the DB only stores metadata used for listing
   and lookup.

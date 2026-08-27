@@ -80,9 +80,9 @@ export default async function PaintingDetailPage({
           </span>
         </div>
 
-        <div className="plate-sheet">
+        <div className="sheet-cols">
           <figure
-            className="plate-sheet-figure"
+            className="sheet-figure"
             style={
               {
                 "--field": painting.field ?? DEFAULT_FIELD,
@@ -111,7 +111,7 @@ export default async function PaintingDetailPage({
             )}
           </figure>
 
-          <aside className="plate-sheet-margin">
+          <aside className="sheet-margin">
             <h1>{painting.title}</h1>
 
             {description ? (

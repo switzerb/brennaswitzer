@@ -22,6 +22,24 @@ model Post {
   tags        String?  // Comma-separated for now, can normalize later
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  revisions   Revision[]
+}
+
+/// A drawing sheet carries a revision table; so does a piece of writing.
+/// Filled from `git log` by prisma/seed.ts, because the history is only
+/// complete in a local clone — the deploy build is shallow and has no git.
+model Revision {
+  id       Int      @id @default(autoincrement())
+  post     Post     @relation(fields: [postSlug], references: [slug], onDelete: Cascade)
+  postSlug String
+  label    String   // A, B, C … oldest first
+  date     DateTime
+  subject  String   // the commit subject, as written
+  commit   String   // short hash
+  order    Int      // 0 is the first issue
+
+  @@index([postSlug])
 }
 
 model Painting {
