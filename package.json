@@ -2,13 +2,16 @@
   "name": "brennaswitzer",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.6"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test \"app/lib/*.test.ts\"",
+    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test \"app/lib/*.test.ts\"",
     "seed": "tsx prisma/seed.ts",
     "seed:paintings": "tsx prisma/seed-paintings.ts"
   },
