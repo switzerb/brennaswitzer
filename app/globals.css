@@ -342,6 +342,11 @@ a.tb-name:hover {
 
 /* ------------------------------------------------- block-in machinery --- */
 
+/* What is left of the block-in after the hero it was built for: every plate
+   dissolves into the flat field of its own sampled colour, and the column
+   grid surfaces underneath. Dragging a gallery wall back to paint is a
+   better demonstration of the idea than the headline ever was. */
+
 /* the twelve column guides, drawn only while the page is unresolved */
 .gridlines {
   position: absolute;
@@ -360,44 +365,6 @@ a.tb-name:hover {
   background: var(--accent);
 }
 
-/* prose: the words fade out and bars come up on the line rhythm */
-.bi {
-  position: relative;
-  color: color-mix(in srgb, var(--graphite) calc(var(--r) * 100%), transparent);
-}
-
-.bi.soft {
-  color: color-mix(in srgb, var(--soft) calc(var(--r) * 100%), transparent);
-}
-
-.bi::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: calc(1 - var(--r));
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--bar) 0 var(--bi-h, 0.62em),
-    transparent var(--bi-h, 0.62em) var(--bi-lh, 1.6em)
-  );
-  background-position: 0 var(--bi-top, 0.22em);
-}
-
-/* the last line of a paragraph is never full width */
-.bi::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: var(--bi-tail, 42%);
-  height: var(--bi-lh, 1.6em);
-  background: var(--paper);
-  opacity: calc(1 - var(--r));
-  pointer-events: none;
-}
-
-/* display lines: each one becomes a single flat field of paint */
 .display {
   font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
   font-variation-settings: "wdth" 125;
@@ -407,27 +374,6 @@ a.tb-name:hover {
   letter-spacing: -0.012em;
   line-height: 0.98;
   margin: 0;
-}
-
-.hl {
-  display: block;
-  position: relative;
-  width: max-content;
-  max-width: 100%;
-  white-space: nowrap;
-  color: color-mix(in srgb, var(--graphite) calc(var(--r) * 100%), transparent);
-}
-
-.hl::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.16em;
-  height: 0.74em;
-  width: var(--w, 100%);
-  background: var(--field, var(--c-terra));
-  opacity: calc(1 - var(--r));
-  pointer-events: none;
 }
 
 /* ------------------------------------------------------------- plates --- */
