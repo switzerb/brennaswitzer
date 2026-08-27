@@ -1094,3 +1094,98 @@ a.plate:hover .plate-img img,
 :root[data-block-in] .scrub .lbl-final {
   color: var(--soft);
 }
+
+/* ------------------------------------------------------------ the run --- */
+
+/* Plates hang in justified rows: every plate in a row shares one height and
+   its width follows the work's own proportions, so nothing is cropped. Row
+   membership is decided in app/lib/rows.ts; the widths below are pure CSS,
+   which is why there is nothing to recompute when the window changes. */
+
+.run {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.8vw, 36px);
+}
+
+.run-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.run-plate {
+  flex: var(--grow) 1 0;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* A trailing row too short to fill the width is pinned to its natural size
+   and left-aligned, rather than stretching one plate across the page. */
+.run-plate[data-pinned] {
+  flex: 0 0 auto;
+  width: var(--w);
+}
+
+.run-label,
+.run-meta {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.run-label {
+  font-size: 0.5rem;
+  color: var(--graphite);
+}
+
+.run-meta {
+  font-size: 0.47rem;
+  color: var(--soft);
+  margin: 0;
+}
+
+.run-rule {
+  height: 1px;
+  background: var(--rule-strong);
+  margin-top: 9px;
+}
+
+.run-marker {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 9px;
+  font-size: 0.5rem;
+}
+
+.run-range {
+  color: var(--accent);
+}
+
+.run-count {
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rows are assigned at desktop proportions; below that a row of eight is
+   unreadable, so the run falls back to a plain pair of columns and each
+   plate keeps its own aspect ratio. */
+@media (max-width: 700px) {
+  .run-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .run-plate,
+  .run-plate[data-pinned] {
+    flex: none;
+    width: auto;
+  }
+}

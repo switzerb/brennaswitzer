@@ -53,13 +53,35 @@ test("no two rows share an item", () => {
   }
 });
 
-test("a trailing orphan is folded into the row above", () => {
+test("rows come out balanced, not front-loaded", () => {
   for (let count = 4; count <= 40; count++) {
     const rows = packJustifiedRows(plates(count), OPTS);
-    if (rows.length < 2) continue;
+    const sizes = rows.map((row) => row.items.length);
     assert.ok(
-      rows[rows.length - 1].items.length >= 3,
-      `${count} plates left a final row of ${rows[rows.length - 1].items.length}`,
+      Math.max(...sizes) - Math.min(...sizes) <= 2,
+      `${count} plates split unevenly: ${sizes.join(", ")}`,
+    );
+  }
+});
+
+test("the target height is a floor, not an average", () => {
+  // Filling rows greedily until the next plate drops them below target does
+  // the opposite: it squashes a small collection into one strip. Nine near
+  // square works at a 200px target used to land in a single 159px row.
+  const mixed = [1.03, 0.99, 0.75, 1.2, 1.41, 1.05, 0.9, 1.33, 1.1].map(
+    (ratio, id) => ({ id, ratio }),
+  );
+  const rows = packJustifiedRows(mixed, {
+    width: 1400,
+    gap: 12,
+    targetHeight: 200,
+  });
+  assert.ok(rows.length > 1, "should not cram nine works into one row");
+  for (const row of rows) {
+    if (!row.justified) continue;
+    assert.ok(
+      row.height >= 200,
+      `row of ${row.items.length} came out at ${Math.round(row.height)}`,
     );
   }
 });
@@ -68,21 +90,30 @@ test("a short collection stays a single justified row", () => {
   const rows = packJustifiedRows(plates(3), { ...OPTS, targetHeight: 200 });
   assert.equal(rows.length, 1);
   assert.equal(rows[0].items.length, 3);
+  assert.ok(rows[0].justified);
 });
 
-test("a final row that cannot fill the width is pinned, not stretched", () => {
-  // Two very wide plates would justify to a huge height on their own.
-  const wide = [
-    { id: 0, ratio: 1.33 },
-    { id: 1, ratio: 1.33 },
-    { id: 2, ratio: 1.33 },
-    { id: 3, ratio: 4.0 },
-    { id: 4, ratio: 4.0 },
-  ];
-  const rows = packJustifiedRows(wide, { width: 1168, gap: 12, targetHeight: 120, minLastRow: 2 });
-  const last = rows[rows.length - 1];
-  if (!last.justified) assert.equal(last.height, 120);
-  for (const row of rows) assert.ok(row.height > 0);
+test("a single work does not fill the page", () => {
+  const rows = packJustifiedRows(plates(1), { ...OPTS, targetHeight: 200 });
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].justified, false);
+  assert.equal(rows[0].height, 200);
+});
+
+test("no row is ever taller than the stretch limit", () => {
+  // Whether a given row needs pinning depends on the width it is hung at,
+  // so the invariant worth asserting is the ceiling, not which rows hit it.
+  const maxStretch = 2.4;
+  const targetHeight = 200;
+  for (const count of [1, 2, 3, 5, 9, 25, 40]) {
+    const rows = packJustifiedRows(plates(count), { ...OPTS, targetHeight });
+    for (const row of rows) {
+      assert.ok(
+        row.height <= targetHeight * maxStretch + 1e-6,
+        `${count} plates produced a row of ${Math.round(row.height)}`,
+      );
+    }
+  }
 });
 
 test("mixed proportions still justify to the width", () => {

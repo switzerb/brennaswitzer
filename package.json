@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.6"
+    "node": ">=22.18"
   },
   "scripts": {
     "postinstall": "prisma generate",
@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test \"app/lib/*.test.ts\"",
+    "test": "node --test \"app/lib/*.test.ts\"",
     "seed": "tsx prisma/seed.ts",
     "seed:paintings": "tsx prisma/seed-paintings.ts"
   },
