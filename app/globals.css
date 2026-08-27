@@ -183,7 +183,9 @@ body {
 .titleblock {
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid var(--rule-strong);
+  /* The site's one band of tint, present on every page. Picking a specimen
+     has to be visible from where you pick it, or the control is a rumour. */
+  border-bottom: 2px solid var(--accent);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -1396,7 +1398,7 @@ a.plate:hover .plate-img img,
 .entry-code {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
-  color: var(--soft);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
@@ -1446,6 +1448,14 @@ a.plate:hover .plate-img img,
   margin: 0;
   font-size: 0.58rem;
   color: var(--soft);
+}
+
+.specimen-swatch {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  align-self: center;
+  border: 1px solid var(--rule-strong);
 }
 
 .specimen-readout .tinted {

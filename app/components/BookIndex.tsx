@@ -140,6 +140,10 @@ export function BookIndex({
         <p className="specimen-readout mono">
           {current ? (
             <>
+              <span
+                className="specimen-swatch"
+                style={{ background: current.hex }}
+              />
               Specimen <span className="tinted">{current.code}</span>{" "}
               <span className="tinted">{current.title}</span>
               <span className="sep">·</span>
