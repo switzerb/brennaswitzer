@@ -100,9 +100,13 @@ export function contrastRatio(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+/** Above this luminance a ground counts as light, and ink moves darker. */
+const LIGHT_GROUND = 0.18;
+
 /**
  * Return a version of `hex` that clears `minRatio` against `ground`, keeping
- * the original hue and saturation and walking only the lightness down.
+ * the original hue and saturation and moving only its lightness — away from
+ * the ground, so it darkens on paper and lightens on ink.
  *
  * This is what lets any painting's colour be used as the site's accent
  * without a pale one making the page unreadable: the tint you see in a
@@ -111,14 +115,23 @@ export function contrastRatio(a: string, b: string): number {
 export function readableOn(
   hex: string,
   ground: string,
-  { minRatio = AA_CONTRAST, fallback = "#222220", step = 0.02 } = {},
+  { minRatio = AA_CONTRAST, step = 0.02 } = {},
 ): string {
+  const darken = relativeLuminance(ground) > LIGHT_GROUND;
+  const delta = darken ? -step : step;
   const { h, s, l } = toHsl(hex);
-  for (let lightness = l; lightness > 0.05; lightness -= step) {
+
+  for (
+    let lightness = l;
+    darken ? lightness > 0.02 : lightness < 0.98;
+    lightness += delta
+  ) {
     const candidate = hslToHex(h, s, lightness);
     if (contrastRatio(candidate, ground) >= minRatio) return candidate;
   }
-  return fallback;
+
+  // Unreachable for any real ground: black and white bracket every colour.
+  return darken ? "#000000" : "#FFFFFF";
 }
 
 /**

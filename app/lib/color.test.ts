@@ -12,6 +12,7 @@ import {
 } from "./color.ts";
 
 const PAPER = "#E5E4E0";
+const INK = "#191919";
 
 test("contrast ratio spans the full range", () => {
   assert.equal(Math.round(contrastRatio("#000000", "#FFFFFF")), 21);
@@ -73,9 +74,32 @@ test("a near-neutral stays a near-neutral", () => {
   }
 });
 
-test("readableOn only ever darkens", () => {
+test("readableOn moves away from the ground, whichever way that is", () => {
   for (const hex of ["#C7A767", "#91ACC7", "#364352"]) {
-    assert.ok(relativeLuminance(readableOn(hex, PAPER)) <= relativeLuminance(hex) + 1e-9);
+    assert.ok(
+      relativeLuminance(readableOn(hex, PAPER)) <= relativeLuminance(hex) + 1e-9,
+      `${hex} should not get lighter on paper`,
+    );
+    assert.ok(
+      relativeLuminance(readableOn(hex, INK)) >= relativeLuminance(hex) - 1e-9,
+      `${hex} should not get darker on ink`,
+    );
+  }
+});
+
+test("every sampled colour becomes legible in dark mode too", () => {
+  // The dark end of the palette is the problem here, the mirror of the pale
+  // end on paper: #364352 is a perfectly good tint until the ground is ink.
+  const palette = [
+    "#364352", "#393E52", "#4D3A52", "#524E4D", "#525252",
+    "#663835", "#73483C", "#814347", "#5E504F", "#8A6548",
+  ];
+  for (const hex of palette) {
+    const ink = readableOn(hex, INK);
+    assert.ok(
+      contrastRatio(ink, INK) >= AA_CONTRAST,
+      `${hex} -> ${ink} only reached ${contrastRatio(ink, INK).toFixed(2)} on ink`,
+    );
   }
 });
 

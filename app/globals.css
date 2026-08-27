@@ -18,7 +18,13 @@
   /* ground and ink — drawing paper, graphite. Deliberately not cream, and
      carrying about half the warmth it started with: enough of a cast that
      the ground reads as paper, not enough to tint the paintings on it. */
-  --paper: #e5e4e0;
+  /* Both grounds are declared in both themes so the tint picker can read
+     them out of CSS and compute a legible ink for each, rather than keeping
+     a second copy of these hexes in TypeScript. */
+  --paper-light: #e5e4e0;
+  --paper-dark: #191919;
+
+  --paper: var(--paper-light);
   --sunk: #dbdad5;
   --graphite: #222220;
   --soft: #5b5b57;
@@ -34,10 +40,12 @@
   --c-rose: #c99580;
   --c-sand: #ddc293;
 
-  /* the single UI accent: the slate blue out of Tuscany Four, taken down a
+  /* The single UI accent: the slate blue out of Tuscany Four, taken down a
      step so it clears AA on the sunk ground as well as on paper. The warm
-     colours belong to the paintings; the interface does not compete. */
-  --accent: #485d7e;
+     colours belong to the paintings; the interface does not compete.
+     Picking a specimen off the index sets --tint-light / --tint-dark and
+     takes over from here. */
+  --accent: var(--tint-light, #485d7e);
 
   --r: 1;
   --gut: clamp(18px, 3.2vw, 44px);
@@ -47,14 +55,14 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #191919;
+    --paper: var(--paper-dark);
     --sunk: #222221;
     --graphite: #e7e6e2;
     --soft: #94938f;
     --rule: rgb(231 230 226 / 0.16);
     --rule-strong: rgb(231 230 226 / 0.34);
     --bar: rgb(231 230 226 / 0.2);
-    --accent: #8fa5c9;
+    --accent: var(--tint-dark, #8fa5c9);
 
     color-scheme: dark;
   }
@@ -740,98 +748,6 @@ a.plate:hover .plate-img img,
   }
 }
 
-/* --------------------------------------------------------------- home --- */
-
-.home {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: clamp(30px, 5vw, 80px);
-  align-items: center;
-  min-height: calc(100dvh - 12rem);
-}
-
-.home-display {
-  font-size: clamp(2.2rem, 6.1vw, 5.1rem);
-}
-
-.eyebrow {
-  color: var(--soft);
-  margin: 0 0 clamp(18px, 2.4vw, 30px);
-}
-
-.lede {
-  font-size: clamp(1.02rem, 1.28vw, 1.24rem);
-  line-height: 1.62;
-  max-width: 60ch;
-  margin: clamp(22px, 2.8vw, 34px) 0 0;
-}
-
-.lede p {
-  margin: 0;
-}
-
-.lede em {
-  font-style: italic;
-  color: var(--graphite);
-}
-
-.home-links {
-  list-style: none;
-  padding: 0;
-  margin: clamp(26px, 3.2vw, 40px) 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--rule);
-}
-
-.home-links a {
-  display: block;
-  padding: 0.85rem 1.6rem 0.85rem 0;
-  margin-right: 1.6rem;
-  color: var(--graphite);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition:
-    color 0.18s ease,
-    border-color 0.18s ease;
-}
-
-.home-links a:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.home-links .arrow {
-  color: var(--soft);
-  margin-left: 0.5rem;
-}
-
-.home-plates {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: clamp(12px, 1.5vw, 22px);
-  height: min(70vh, 600px);
-}
-
-.home-plates .plate {
-  min-height: 0;
-}
-
-.home-plates .plate-img {
-  aspect-ratio: auto;
-  flex: 1;
-  min-height: 0;
-}
-
-.home-plates .plate:nth-child(2) {
-  margin-top: clamp(16px, 2.6vw, 40px);
-}
-
-.home-plates .plate:nth-child(3) {
-  margin-bottom: clamp(16px, 2.6vw, 40px);
-}
-
 /* ----------------------------------------------------------------- cv --- */
 
 .cv {
@@ -974,32 +890,6 @@ a.plate:hover .plate-img img,
 /* -------------------------------------------------------- responsive --- */
 
 @media (max-width: 1000px) {
-  .home {
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: clamp(26px, 5vw, 44px);
-    min-height: 0;
-  }
-
-  .home-plates {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: auto;
-    height: auto;
-  }
-
-  .home-plates .plate {
-    margin: 0 !important;
-  }
-
-  .home-plates .plate-img {
-    aspect-ratio: 3 / 4;
-    flex: none;
-  }
-
-  .home-plates figcaption {
-    display: none;
-  }
-
   .cv {
     grid-template-columns: 1fr;
   }
@@ -1018,10 +908,6 @@ a.plate:hover .plate-img img,
   .entry .tag {
     grid-row: 1;
     justify-self: start;
-  }
-
-  .home-plates {
-    grid-template-columns: 1fr 1fr;
   }
 
   .scrub {
@@ -1362,5 +1248,269 @@ a.plate:hover .plate-img img,
 @media (max-width: 900px) {
   .plate-sheet {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------- book index --- */
+
+/* The front page sets like the back of a book: sections with dotted leaders
+   and counts, every painting a numbered specimen carrying the colour taken
+   off it. The bar along the bottom is that palette grouped one family per
+   collection — the families are a result of what the work is made of, not a
+   decision anyone made. */
+
+.index-page {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(26px, 3vw, 38px);
+  min-height: calc(100dvh - 13rem);
+}
+
+.index-display {
+  font-size: clamp(2.1rem, 5.4vw, 4.2rem);
+}
+
+.index-lede {
+  font-size: clamp(1rem, 1.2vw, 1.16rem);
+  line-height: 1.6;
+  color: var(--soft);
+  max-width: 58ch;
+  margin: 1rem 0 0;
+}
+
+.index-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.index-controls-label {
+  font-size: 0.53rem;
+  color: var(--soft);
+}
+
+.index-chips {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.index-chip {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--soft);
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.index-chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.book-index {
+  column-count: 2;
+  column-gap: clamp(32px, 4vw, 64px);
+}
+
+.book-section {
+  break-inside: avoid;
+  margin-bottom: clamp(20px, 2.4vw, 28px);
+}
+
+.book-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.book-section-title {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-stretch: 112%;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--graphite);
+}
+
+.book-section-count {
+  font-size: 0.53rem;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the dotted run between a heading and its count, as an index sets */
+.leader {
+  flex: 1 0 12px;
+  min-width: 12px;
+  border-bottom: 1px dotted var(--rule-strong);
+  transform: translateY(-3px);
+}
+
+.book-entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.book-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.16rem 0;
+}
+
+.entry-chip {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  align-self: center;
+}
+
+.entry-chip[aria-pressed="true"] {
+  outline: 1px solid var(--graphite);
+  outline-offset: 1px;
+}
+
+.entry-chip-empty {
+  background: var(--rule);
+  cursor: default;
+}
+
+.entry-code {
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  color: var(--soft);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.entry-title {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 0.86rem;
+  line-height: 1.25;
+  color: var(--graphite);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.entry-title:hover {
+  color: var(--accent);
+}
+
+.entry-detail {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--soft);
+  flex-shrink: 0;
+  max-width: 20ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------- specimen bar --- */
+
+.specimen-bar {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.specimen-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: 0.58rem;
+  color: var(--soft);
+}
+
+.specimen-readout .tinted {
+  color: var(--accent);
+}
+
+.specimen-readout .sep {
+  opacity: 0.5;
+}
+
+.specimen-hint {
+  margin-left: auto;
+}
+
+.families {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-end;
+}
+
+.family {
+  min-width: 0;
+  flex-basis: 0;
+}
+
+.family-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.5rem;
+  color: var(--soft);
+  margin-bottom: 0.45rem;
+}
+
+.family-chips {
+  display: flex;
+  height: 72px;
+  align-items: flex-end;
+}
+
+.family-chip {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  height: 76%;
+  transition: height 0.18s ease;
+}
+
+.family-chip[data-picked],
+.family-chip:hover {
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .book-index {
+    column-count: 1;
+  }
+
+  .index-page {
+    min-height: 0;
+  }
+
+  .specimen-hint {
+    display: none;
   }
 }
