@@ -612,7 +612,7 @@ a.plate:hover .plate-img img,
 .pager a {
   color: var(--soft);
   text-decoration: none;
-  max-width: 22ch;
+  max-width: 30ch;
   transition: color 0.18s ease;
 }
 
@@ -932,19 +932,6 @@ a.plate:hover .plate-img img,
 
 /* --------------------------------------------------------- plate grid --- */
 
-.plate-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-  gap: clamp(18px, 2.4vw, 34px);
-  /* each plate keeps its own height, so a caption always sits directly
-     under its painting instead of floating off the bottom of a tall row */
-  align-items: start;
-}
-
-.plate-grid .plate-img {
-  background: var(--sunk);
-}
-
 /* --------------------------------------------------------- collection --- */
 
 .collection-grid {
@@ -952,41 +939,6 @@ a.plate:hover .plate-img img,
   align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: clamp(20px, 2.6vw, 38px);
-}
-
-.solo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 36px);
-  max-width: 1100px;
-  margin-inline: auto;
-}
-
-.solo-frame {
-  position: relative;
-  border: 1px solid var(--rule-strong);
-  background: var(--sunk);
-  height: min(64vh, 720px);
-}
-
-.solo-frame img {
-  object-fit: contain;
-}
-
-.solo-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--field);
-  opacity: calc(1 - var(--r));
-  pointer-events: none;
-}
-
-.solo-meta {
-  display: flex;
-  gap: 0.6rem 1.4rem;
-  flex-wrap: wrap;
-  color: var(--soft);
 }
 
 /* ------------------------------------------------------------ article --- */
@@ -1187,5 +1139,228 @@ a.plate:hover .plate-img img,
   .run-plate[data-pinned] {
     flex: none;
     width: auto;
+  }
+}
+
+/* ------------------------------------------------------- a single plate --- */
+
+/* The plate page borrows the grammar of a drawing sheet: a title block
+   across the top, the work dimensioned, and the record as a table. It is
+   the one place in the site where architectural annotation is native rather
+   than decorative — these really are elevation drawings of buildings. */
+
+.drawing-titleblock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  border: 1px solid var(--rule-strong);
+  color: var(--soft);
+  font-size: 0.55rem;
+  margin-bottom: clamp(26px, 3.4vw, 40px);
+}
+
+.drawing-titleblock > * {
+  padding: 0.6rem 1rem;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+}
+
+.drawing-titleblock > :last-child {
+  border-right: 0;
+}
+
+.drawing-titleblock .tb-who {
+  color: var(--graphite);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.drawing-titleblock .tb-code {
+  color: var(--accent);
+}
+
+.drawing-titleblock .tb-subject {
+  flex: 1;
+  min-width: 0;
+}
+
+.plate-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(30px, 4vw, 64px);
+  align-items: start;
+}
+
+.plate-sheet-figure {
+  margin: 0;
+}
+
+.plate-sheet-figure .plate-img {
+  aspect-ratio: var(--ar);
+}
+
+/* Drawn only when there is a measurement to draw — see the page. */
+.dimension {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  height: 30px;
+  margin-top: 0.5rem;
+  color: var(--accent);
+  font-size: 0.55rem;
+}
+
+.dimension-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule-strong);
+  position: relative;
+}
+
+/* extension lines, with the slash ticks a dimension line is drawn with */
+.dimension-rule::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  width: 1px;
+  height: 15px;
+  background: var(--rule-strong);
+}
+
+.dimension-rule:first-child::before {
+  left: 0;
+}
+
+.dimension-rule:last-child::before {
+  right: 0;
+}
+
+.dimension-rule::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 12px;
+  height: 1px;
+  background: var(--graphite);
+  transform: rotate(-45deg);
+}
+
+.dimension-rule:first-child::after {
+  left: -5px;
+}
+
+.dimension-rule:last-child::after {
+  right: -5px;
+}
+
+.plate-sheet-margin {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.6vw, 30px);
+}
+
+.plate-sheet-margin h1 {
+  font-family: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  font-variation-settings: "wdth" 118;
+  font-stretch: 118%;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.008em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.plate-note {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--soft);
+}
+
+.plate-note-empty {
+  margin: 0;
+  color: var(--soft);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.margin-head {
+  margin: 0 0 0.7rem;
+  font-size: 0.53rem;
+  color: var(--soft);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule-strong);
+  font-weight: 500;
+}
+
+.specimen {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.specimen-chip {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.specimen-facts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.55rem;
+  color: var(--soft);
+}
+
+.specimen-code {
+  color: var(--graphite);
+}
+
+.record {
+  margin: 0;
+  font-size: 0.55rem;
+}
+
+.record > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.record > div:last-child {
+  border-bottom: 0;
+}
+
+.record dt {
+  color: var(--soft);
+}
+
+.record dd {
+  margin: 0;
+  text-align: right;
+}
+
+/* A field that exists and has not been filled in. Not a guess, and not a
+   gap you have to wonder about. */
+.unrecorded {
+  color: var(--soft);
+  opacity: 0.65;
+}
+
+/* Inline run of small facts, as under a page heading. */
+.inline-facts {
+  display: flex;
+  gap: 0.6rem 1.4rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .plate-sheet {
+    grid-template-columns: 1fr;
   }
 }

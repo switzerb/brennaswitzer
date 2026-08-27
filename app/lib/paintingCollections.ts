@@ -10,6 +10,8 @@
 export interface PaintingCollection {
   slug: string;
   title: string;
+  /** Catalogue prefix, e.g. HO-21. */
+  code: string;
   blurb: string;
   targetRowHeight: number;
 }
@@ -18,6 +20,7 @@ export const PAINTING_COLLECTIONS: readonly PaintingCollection[] = [
   {
     slug: "abstract-landscape",
     title: "Abstract Landscape",
+    code: "AL",
     blurb:
       "Acrylic on paper. Mostly painted somewhere other than where I live.",
     targetRowHeight: 200,
@@ -25,6 +28,7 @@ export const PAINTING_COLLECTIONS: readonly PaintingCollection[] = [
   {
     slug: "houses",
     title: "Houses",
+    code: "HO",
     blurb:
       "A drawing of every place I have ever lived, in the order I lived in them.",
     targetRowHeight: 130,
@@ -32,6 +36,7 @@ export const PAINTING_COLLECTIONS: readonly PaintingCollection[] = [
   {
     slug: "sketches",
     title: "Sketches",
+    code: "SK",
     blurb: "Studies, and things that would not sit still.",
     targetRowHeight: 200,
   },

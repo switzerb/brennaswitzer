@@ -87,7 +87,7 @@ export default function AboutPage() {
       <div className="measure">
         <header className="sheet-head">
           <h1>Curriculum Vitae</h1>
-          <p className="blurb mono solo-meta">
+          <p className="blurb mono inline-facts">
             <span>Portland, Oregon</span>
             <span>hello@brennaswitzer.com</span>
           </p>

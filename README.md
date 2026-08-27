@@ -34,6 +34,15 @@ built around that idea.
   runner to install.
 - **Type**: Archivo (width axis, set expanded) for headings, Newsreader for
   prose, JetBrains Mono for every label, date and caption.
+- **Empty fields show as gaps, not guesses.** A plate page renders an em dash
+  for anything the manifest has not filled, and only draws its dimension line
+  when there is a measurement to draw. Fill `dimensions` on a painting and
+  the annotation appears.
+- **Painting descriptions are markdown**, compiled by the same renderer as
+  the essays (`renderMarkdown` in `app/lib/mdx.ts`). That makes them MDX in
+  practice, so a literal `<` or `{` in prose needs escaping; because the
+  pages are prerendered, a bad one fails the build rather than rendering
+  wrong.
 
 Rerun the sampler after adding paintings, then reseed:
 
