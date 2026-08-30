@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
-import { PostSubnav } from "@/app/components/PostSubnav";
-import { PostList } from "@/app/components/PostList";
+import { PostSubnav } from "@/src/components/PostSubnav";
+import { PostList } from "@/src/components/PostList";
 
 export const metadata: Metadata = {
   title: "Merge Anxiety",

@@ -1,12 +1,3 @@
-/**
- * The painting collections, and how each one wants to be hung.
- *
- * `targetRowHeight` is the height the gallery packs rows toward. It is the
- * one dial that decides how a collection reads: a small collection with a
- * tall target shows large, a big one with a short target shows dense. Rows
- * fill to the target rather than to a fixed count, so this keeps working as
- * work is added.
- */
 export interface PaintingCollection {
   slug: string;
   title: string;

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
 import { PAINTING_COLLECTIONS } from "@/app/lib/paintingCollections";
-import { Plate } from "@/app/components/Plate";
+import { Plate } from "@/src/components/Plate";
 
 export const metadata: Metadata = {
   title: "Plates",

@@ -10,19 +10,14 @@ import {
   BookIndex,
   type Family,
   type IndexSection,
-} from "@/app/components/BookIndex";
+} from "@/src/components/BookIndex";
+import {code, monthOf} from "@/src/utils";
 
 export const metadata: Metadata = {
   title: "Brenna Switzer — Staff Software Engineer",
   description:
-    "An ongoing index of paintings, essays and a working life. Every colour is sampled from the work it names.",
+    "Paintings and writing, indexed.",
 };
-
-const code = (prefix: string, index: number) =>
-  `${prefix}-${String(index + 1).padStart(2, "0")}`;
-
-const monthOf = (date: Date) =>
-  date.toISOString().slice(0, 7).replace("-", ".");
 
 export default async function Home() {
   const [paintings, posts] = await Promise.all([

@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/app/lib/prisma";
 import { POST_SERIES, seriesTitle } from "@/app/lib/postSeries";
-import { PostSubnav } from "@/app/components/PostSubnav";
-import { PostList } from "@/app/components/PostList";
+import { PostSubnav } from "@/src/components/PostSubnav";
+import { PostList } from "@/src/components/PostList";
 
 export async function generateStaticParams() {
   return POST_SERIES.map((s) => ({ series: s.slug }));
