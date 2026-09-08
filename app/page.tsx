@@ -87,25 +87,6 @@ export default async function Home() {
     });
   }
 
-  sections.push({
-    id: "work",
-    title: "Work",
-    entries: [
-      ...EXPERIENCE.map((employer, i) => ({
-        code: code("CV", i),
-        title: `${employer.company} — ${employer.roles[0].title}`,
-        detail: span(employer),
-        href: "/about",
-      })),
-      {
-        code: code("CV", EXPERIENCE.length),
-        title: `${EDUCATION.school} — ${EDUCATION.degree}`,
-        detail: EDUCATION.dates.replace(/\s/g, ""),
-        href: "/about",
-      },
-    ],
-  });
-
   const total = sections.reduce((n, s) => n + s.entries.length, 0);
   const specimens = families.flatMap((family) => family.specimens);
   const opening =
@@ -124,10 +105,11 @@ export default async function Home() {
               starts out rough.
             </h1>
             <p className="index-lede">
-              An ongoing index of {paintings.length} paintings, {posts.length}{" "}
-              essays and a working life &mdash; {total} entries in all. Every
-              colour here was sampled from the work it is named after; nothing
-              was chosen for it.
+              Index of {paintings.length} paintings and {posts.length} posts. If you&apos;re here, it&apos;s probably because you know I
+              paint and you&apos;re curious to see, you know I code and you&apos;re here to judge, or you&apos;re lost. All three are fine by me.
+            </p>
+            <p className="index-lede">
+              This site is less a personal brand than a digital sketchbook.  None of us actually know what we&apos;re doing. That&apos;s never a reason to stop flailing — learning something new is still the finest pleasure there is.
             </p>
           </div>
         </header>

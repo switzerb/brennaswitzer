@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { hueSortKey, readableOn } from "@/app/lib/color";
 
 export interface IndexEntry {
@@ -53,6 +53,14 @@ export function BookIndex({
 }) {
   const [order, setOrder] = useState<Order>("colour");
   const [picked, setPicked] = useState(defaultSpecimen);
+  const entryRefs = useRef(new Map<string, HTMLLIElement>());
+
+  function scrollToEntry(code: string) {
+    entryRefs.current.get(code)?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
 
   const specimens = families.flatMap((family) => family.specimens);
   const current =
@@ -110,7 +118,14 @@ export function BookIndex({
 
             <ul className="book-entries">
               {section.entries.map((entry) => (
-                <li className="book-entry" key={entry.code}>
+                <li
+                  className="book-entry"
+                  key={entry.code}
+                  ref={(el) => {
+                    if (el) entryRefs.current.set(entry.code, el);
+                    else entryRefs.current.delete(entry.code);
+                  }}
+                >
                   {entry.hex ? (
                     <button
                       type="button"
@@ -155,7 +170,7 @@ export function BookIndex({
             "No specimens yet"
           )}
           <span className="specimen-hint">
-            Sampled from the work — pick one
+            Pick a card, any card.
           </span>
         </p>
 
@@ -183,6 +198,7 @@ export function BookIndex({
                       aria-label={`${specimen.title}, ${specimen.hex}`}
                       aria-pressed={specimen.code === picked}
                       onClick={() => pick(specimen.code, specimen.hex)}
+                      onMouseEnter={() => scrollToEntry(specimen.code)}
                     />
                   ))}
               </div>
