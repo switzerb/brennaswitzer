@@ -5,8 +5,8 @@ import {
   PAINTING_COLLECTIONS,
   paintingCollection,
 } from "@/app/lib/paintingCollections";
-import { PaintingSubnav } from "@/app/components/PaintingSubnav";
-import { Run } from "@/app/components/Run";
+import { PaintingSubnav } from "@/src/components/PaintingSubnav";
+import { Run } from "@/src/components/Run";
 
 export async function generateStaticParams() {
   return PAINTING_COLLECTIONS.map((c) => ({ collection: c.slug }));

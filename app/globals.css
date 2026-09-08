@@ -1,26 +1,6 @@
 @import "tailwindcss";
 
-/* ==========================================================================
-   Block-In — the design system for brennaswitzer.com
-
-   Two bodies of work sit behind every choice here. The Houses series is
-   graphite: line, structure, measurement. The abstract landscapes are
-   colour. So the site's chrome is drawn — a drafting sheet with a title
-   block, register marks and hairline rules — and every warm colour on the
-   page is sampled from an actual painting rather than invented.
-
-   `--r` ("resolve") runs 0 → 1 and is set on <html> by ResolveRoot.
-   0 is the block-in: flat fields of paint where the content will go.
-   1 is the finished sheet. Everything that participates reads `--r`.
-   ========================================================================== */
-
 :root {
-  /* ground and ink — drawing paper, graphite. Deliberately not cream, and
-     carrying about half the warmth it started with: enough of a cast that
-     the ground reads as paper, not enough to tint the paintings on it. */
-  /* Both grounds are declared in both themes so the tint picker can read
-     them out of CSS and compute a legible ink for each, rather than keeping
-     a second copy of these hexes in TypeScript. */
   --paper-light: #e5e4e0;
   --paper-dark: #191919;
 
@@ -519,7 +499,7 @@ a.plate:hover .plate-img img,
 
 .entry:hover {
   background: var(--sunk);
-  padding-inline: 0.7rem;
+  padding-inline: 2rem;
 }
 
 .entry time {
@@ -1324,7 +1304,17 @@ a.plate:hover .plate-img img,
   align-items: baseline;
   gap: 0.55rem;
   padding: 0.16rem 0;
+  line-height: 1.5rem;
 }
+
+.book-entry:hover {
+  margin-left: .8rem;
+}
+
+.book-entry:hover::after {
+  content: "→"
+}
+
 
 .entry-chip {
   width: 9px;
@@ -1357,7 +1347,6 @@ a.plate:hover .plate-img img,
 .entry-title {
   font-family: var(--font-newsreader), Georgia, serif;
   font-size: 0.86rem;
-  line-height: 1.25;
   color: var(--graphite);
   text-decoration: none;
   white-space: nowrap;

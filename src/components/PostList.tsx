@@ -6,15 +6,18 @@ function formatDate(date: Date) {
   return date.toISOString().slice(0, 10).replace(/-/g, ".");
 }
 
+
+type PostListProps = {
+  posts: Post[];
+  featureFirst?: boolean;
+  showSeries?: boolean;
+}
+
 export function PostList({
   posts,
   featureFirst = false,
   showSeries = true,
-}: {
-  posts: Post[];
-  featureFirst?: boolean;
-  showSeries?: boolean;
-}) {
+}: PostListProps ) {
   return (
     <div className="index">
       {posts.map((post, index) => (

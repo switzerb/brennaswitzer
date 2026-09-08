@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import { compileMDX } from "next-mdx-remote/rsc";
-import { Message, Conversation } from "@/app/components/Message";
+import { Message, Conversation } from "@/src/components/Message";
 
 /**
  * Compile a markdown string to rendered content.

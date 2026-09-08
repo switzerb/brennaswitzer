@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Archivo, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { TitleBlock } from "./components/TitleBlock";
-import { FootRule } from "./components/FootRule";
-import { Gridlines } from "./components/Gridlines";
+import { TitleBlock } from "@/src/components/TitleBlock";
+import { FootRule } from "@/src/components/FootRule";
+import { Gridlines } from "@/src/components/Gridlines";
 
 /* Archivo carries the width axis — the headings are set expanded, which is
    where the drafting-sheet voice comes from. */
